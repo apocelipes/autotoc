@@ -21,6 +21,13 @@ func main() {
 		"prettyprint",
 		"选择格式化html代码的方式，目前只支持GoHTML和prettyprint")
 
+	catalogId := flag.String("catalog-id",
+		"bookmark",
+		"目录的html id")
+	catalogTitle := flag.String("title",
+		"本文索引",
+		"目录的标题")
+
 	flag.Parse()
 	if len(flag.Args()) == 0 {
 		fmt.Fprint(os.Stderr, "错误：需要一个输入文件。\n")
@@ -38,7 +45,8 @@ func main() {
 	for _, v := range ret {
 		html.WriteString(v.Html())
 	}
+	data := format.RenderCatalog(*catalogId, *catalogTitle, html.String())
 
 	formatHtmlFunc := format.NewFormatter(*formatter)
-	fmt.Println(formatHtmlFunc(html.String()))
+	fmt.Println(formatHtmlFunc(data))
 }

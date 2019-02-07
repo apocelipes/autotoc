@@ -1,3 +1,5 @@
+github.com/hermanschaaf/prettyprint v0.0.0-20151019092546-de00933accbc h1:apM7oQ/juw7MnmwRt2VnNVNaJshu/BDPlf0oxYNhfc8=
+github.com/hermanschaaf/prettyprint v0.0.0-20151019092546-de00933accbc/go.mod h1:ikK4ubbDyo7AJQ19JMJMtCazx4YE05ekila214o5CGY=
 github.com/yosssi/gohtml v0.0.0-20190128141317-9b7db94d32d9 h1:fy3FCd+9/SnyVcESUaZ12rrx3qg3jcxFqP6x4iOuJ2s=
 github.com/yosssi/gohtml v0.0.0-20190128141317-9b7db94d32d9/go.mod h1:+ccdNT0xMY1dtc5XBxumbYfOUhmduiGudqaDgD2rVRE=
 golang.org/x/net v0.0.0-20190206173232-65e2d4e15006 h1:bfLnR+k0tq5Lqt6dflRLcZiz6UaXCMt3vhYJ1l4FQ80=

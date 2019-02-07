@@ -6,19 +6,24 @@ import (
 	"os"
 	"strings"
 
-	"github.com/yosssi/gohtml"
-
+	"github.com/apocelipes/markdown-catalog-generator/format"
 	"github.com/apocelipes/markdown-catalog-generator/parser"
 )
 
 func main() {
-	topTag := ""
-	topTagUsage := "设置作为目录顶层项的tag"
-	flag.StringVar(&topTag, "top-tag", "h2", topTagUsage)
-	flag.StringVar(&topTag, "t", "h2", topTagUsage)
+	topTag := StringFlagWithShortName("top-tag",
+		"t",
+		"h2",
+		"设置作为目录顶层项的tag")
+
+	formatter := StringFlagWithShortName("formatter",
+		"f",
+		"prettyprint",
+		"选择格式化html代码的方式，目前只支持GoHTML和prettyprint")
+
 	flag.Parse()
 	if len(flag.Args()) == 0 {
-		fmt.Fprint(os.Stderr, "错误：需要一个输入文件。")
+		fmt.Fprint(os.Stderr, "错误：需要一个输入文件。\n")
 		os.Exit(1)
 	}
 
@@ -28,11 +33,12 @@ func main() {
 	}
 	defer f.Close()
 
-	ret := parser.MarkdownParser(f, topTag)
+	ret := parser.MarkdownParser(f, *topTag)
 	html := strings.Builder{}
 	for _, v := range ret {
 		html.WriteString(v.Html())
 	}
 
-	fmt.Println(gohtml.Format(html.String()))
+	formatHtmlFunc := format.NewFormatter(*formatter)
+	fmt.Println(formatHtmlFunc(html.String()))
 }

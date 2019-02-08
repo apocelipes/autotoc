@@ -5,8 +5,12 @@ import (
 	"strings"
 )
 
+// 标题节点，按顶层标签构建的节点树
+// 节点树的生长方向是单一的固定的，
+// 假设节点按从左向右生长则最新添加的子节点一定在最右或者是最右子节点的后代
 type TitleNode struct {
 	// html的tag，id，inner text
+	// 或markdown格式的标题，id和content相同，tagName与'#'的数量对应
 	tagName string
 	id      string
 	content string
@@ -71,15 +75,25 @@ func (t *TitleNode) Html() string {
 	return html.String()
 }
 
-func (t *TitleNode) Markdown(indent string) string {
+// 生成当前节点及其子节点的markdown
+// isRoot为true表示当前节点没有父节点，因此不设置缩进，只设置其子节点的缩进
+func (t *TitleNode) Markdown(indent string, isRoot bool) string {
 	if !t.hasChild() {
+		if isRoot {
+			return fmt.Sprintf(catalogMarkdownTemplate, t.content, t.id)
+		}
+
 		return fmt.Sprintf(indent+catalogMarkdownTemplate, t.content, t.id)
 	}
 
 	md := strings.Builder{}
-	md.WriteString(fmt.Sprintf(indent+catalogMarkdownTemplate, t.content, t.id))
+	if isRoot {
+		md.WriteString(fmt.Sprintf(catalogMarkdownTemplate, t.content, t.id))
+	} else {
+		md.WriteString(fmt.Sprintf(indent+catalogMarkdownTemplate, t.content, t.id))
+	}
 	for _, child := range t.children {
-		md.WriteString(child.Markdown("  "+indent))
+		md.WriteString(child.Markdown(indent, false))
 	}
 
 	return md.String()

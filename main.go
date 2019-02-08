@@ -38,10 +38,19 @@ func main() {
 		"html",
 		"扫描文件的标题语法类型，可以为html或md")
 
+	catalogIndent := StringFlagWithShortName("indent",
+		"i",
+		"  ",
+		"目录的缩进，默认为2空格(使用prettyprint或output为md时不支持)")
+
 	flag.Parse()
 	if len(flag.Args()) == 0 {
 		fmt.Fprint(os.Stderr, "错误：需要一个输入文件。\n")
 		os.Exit(1)
+	}
+	// 终端可能无法直接输入tab，所以用\t代替
+	if *catalogIndent == "\\t" {
+		*catalogIndent = "\t"
 	}
 
 	f, err := os.Open(flag.Args()[0])
@@ -60,13 +69,13 @@ func main() {
 		data := format.RenderCatalog(*catalogId, *catalogTitle, html.String())
 
 		formatHtmlFunc := format.NewFormatter(*formatter)
-		fmt.Println(formatHtmlFunc(data))
+		fmt.Println(formatHtmlFunc(data, *catalogIndent))
 	case "md":
 		md := strings.Builder{}
 		md.WriteString("#### "+*catalogTitle+":\n")
 		for _, v := range ret {
 			// each parent has no indent
-			md.WriteString(v.Markdown(""))
+			md.WriteString(v.Markdown(*catalogIndent, true))
 		}
 
 		fmt.Println(md.String())

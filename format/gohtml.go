@@ -7,6 +7,7 @@ func init() {
 }
 
 // 使用GoHTML格式化html
-func goHtmlFormatter(html string) string {
+// 不支持自定义缩进
+func goHtmlFormatter(html, _ string) string {
 	return gohtml.Format(html)
 }

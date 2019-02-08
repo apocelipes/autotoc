@@ -1,7 +1,7 @@
 package format
 
 // 返回格式化后的html
-type FormatFunc func(string) string
+type FormatFunc func(data, indent string) string
 
 var (
 	formatters = make(map[string]FormatFunc)

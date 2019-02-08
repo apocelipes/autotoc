@@ -7,7 +7,7 @@ func init() {
 }
 
 // 使用prettyprint格式化html
-func prettyPrintFormatter(html string) string {
+func prettyPrintFormatter(html, indent string) string {
 	ret, _ := prettyprint.Prettify(html, indent)
 	return ret
 }

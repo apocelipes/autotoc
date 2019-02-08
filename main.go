@@ -28,6 +28,10 @@ func main() {
 		"本文索引",
 		"目录的标题")
 
+	catalogType := flag.String("type",
+		"html",
+		"生成目录的类型，可以为html或md(markdown)")
+
 	flag.Parse()
 	if len(flag.Args()) == 0 {
 		fmt.Fprint(os.Stderr, "错误：需要一个输入文件。\n")
@@ -41,12 +45,23 @@ func main() {
 	defer f.Close()
 
 	ret := parser.MarkdownParser(f, *topTag)
-	html := strings.Builder{}
-	for _, v := range ret {
-		html.WriteString(v.Html())
-	}
-	data := format.RenderCatalog(*catalogId, *catalogTitle, html.String())
+	switch *catalogType {
+	case "html":
+		html := strings.Builder{}
+		for _, v := range ret {
+			html.WriteString(v.Html())
+		}
+		data := format.RenderCatalog(*catalogId, *catalogTitle, html.String())
 
-	formatHtmlFunc := format.NewFormatter(*formatter)
-	fmt.Println(formatHtmlFunc(data))
+		formatHtmlFunc := format.NewFormatter(*formatter)
+		fmt.Println(formatHtmlFunc(data))
+	case "md":
+		md := strings.Builder{}
+		for _, v := range ret {
+			// each parent has no indent
+			md.WriteString(v.Markdown(""))
+		}
+
+		fmt.Println(md.String())
+	}
 }

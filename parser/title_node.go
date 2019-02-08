@@ -70,3 +70,17 @@ func (t *TitleNode) Html() string {
 
 	return html.String()
 }
+
+func (t *TitleNode) Markdown(indent string) string {
+	if !t.hasChild() {
+		return fmt.Sprintf(indent+catalogMarkdownTemplate, t.content, t.id)
+	}
+
+	md := strings.Builder{}
+	md.WriteString(fmt.Sprintf(indent+catalogMarkdownTemplate, t.content, t.id))
+	for _, child := range t.children {
+		md.WriteString(child.Markdown("  "+indent))
+	}
+
+	return md.String()
+}

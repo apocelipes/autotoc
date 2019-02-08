@@ -19,18 +19,24 @@ func main() {
 	formatter := StringFlagWithShortName("formatter",
 		"f",
 		"prettyprint",
-		"选择格式化html代码的方式，目前只支持GoHTML和prettyprint")
+		"选择格式化html代码的方式，目前只支持GoHTML和prettyprint(output为markdown时不支持)")
 
 	catalogId := flag.String("catalog-id",
 		"bookmark",
-		"目录的html id")
+		"目录的html id(output为markdown时不支持)")
 	catalogTitle := flag.String("title",
 		"本文索引",
 		"目录的标题")
 
-	catalogType := flag.String("type",
+	catalogOutputType := StringFlagWithShortName("output",
+		"o",
 		"html",
-		"生成目录的类型，可以为html或md(markdown)")
+		"输出的目录格式，可以为html或md(markdown)")
+
+	catalogScanType := StringFlagWithShortName("title-language",
+		"l",
+		"html",
+		"扫描文件的标题语法类型，可以为html或md")
 
 	flag.Parse()
 	if len(flag.Args()) == 0 {
@@ -44,8 +50,8 @@ func main() {
 	}
 	defer f.Close()
 
-	ret := parser.MarkdownParser(f, *topTag)
-	switch *catalogType {
+	ret := parser.MarkdownParser(f, *topTag, *catalogScanType)
+	switch *catalogOutputType {
 	case "html":
 		html := strings.Builder{}
 		for _, v := range ret {
@@ -57,6 +63,7 @@ func main() {
 		fmt.Println(formatHtmlFunc(data))
 	case "md":
 		md := strings.Builder{}
+		md.WriteString("#### "+*catalogTitle+":\n")
 		for _, v := range ret {
 			// each parent has no indent
 			md.WriteString(v.Markdown(""))

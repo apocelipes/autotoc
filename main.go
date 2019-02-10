@@ -43,6 +43,12 @@ func main() {
 		"  ",
 		"目录的缩进，默认为2空格(使用prettyprint或output为md时不支持)")
 
+	writeBack := flag.Bool("w", false, "是否将目录写入文件指定位置")
+	tocMark := StringFlagWithShortName("toc-mark",
+		"m",
+		"[TOC]",
+		"指定文件中写入目录的位置")
+
 	flag.Parse()
 	if len(flag.Args()) == 0 {
 		fmt.Fprint(os.Stderr, "错误：需要一个输入文件。\n")
@@ -53,31 +59,48 @@ func main() {
 		*catalogIndent = "\t"
 	}
 
-	f, err := os.Open(flag.Args()[0])
+	var err error
+	var f *os.File
+	if !*writeBack {
+		f, err = os.Open(flag.Arg(0))
+	} else {
+		f, err = os.OpenFile(flag.Arg(0), os.O_RDWR, 0644)
+	}
 	if err != nil {
 		panic(err)
 	}
 	defer f.Close()
 
 	ret := parser.MarkdownParser(f, *topTag, *catalogScanType)
+	var data string
 	switch *catalogOutputType {
 	case "html":
 		html := strings.Builder{}
 		for _, v := range ret {
 			html.WriteString(v.Html())
 		}
-		data := format.RenderCatalog(*catalogId, *catalogTitle, html.String())
+		data = format.RenderCatalog(*catalogId, *catalogTitle, html.String())
 
 		formatHtmlFunc := format.NewFormatter(*formatter)
-		fmt.Println(formatHtmlFunc(data, *catalogIndent))
+		data = formatHtmlFunc(data, *catalogIndent)
 	case "md":
 		md := strings.Builder{}
-		md.WriteString("#### "+*catalogTitle+":\n")
+		md.WriteString("#### " + *catalogTitle + ":\n")
 		for _, v := range ret {
 			// each parent has no indent
 			md.WriteString(v.Markdown(*catalogIndent, true))
 		}
 
-		fmt.Println(md.String())
+		data = md.String()
+	}
+
+	if !*writeBack {
+		fmt.Println(data)
+		return
+	}
+
+	err = WriteBackFile(data, *tocMark, f)
+	if err != nil {
+		panic(err)
 	}
 }

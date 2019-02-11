@@ -11,48 +11,53 @@ import (
 )
 
 func main() {
+	flag.Usage = func() {
+		fmt.Fprintln(flag.CommandLine.Output(), usage)
+		os.Exit(1)
+	}
+
 	topTag := StringFlagWithShortName("top-tag",
 		"t",
-		"h2",
-		"设置作为目录顶层项的tag")
+		topTagDefault,
+		topTagUsage)
 
 	formatter := StringFlagWithShortName("formatter",
 		"f",
-		"prettyprint",
-		"选择格式化html代码的方式，目前只支持GoHTML和prettyprint(output为markdown时不支持)")
+		formatterDefault,
+		formatterUsage)
 
 	catalogId := flag.String("catalog-id",
-		"bookmark",
-		"目录的html id(output为markdown时不支持)")
+		catalogIdDefault,
+		catalogIdUsage)
 	catalogTitle := flag.String("title",
-		"本文索引",
-		"目录的标题")
+		catalogTitleDefault,
+		catalogTitleUsage)
 
 	catalogOutputType := StringFlagWithShortName("output",
 		"o",
-		"html",
-		"输出的目录格式，可以为html或md(markdown)")
+		catalogOutputTypeDefault,
+		catalogOutputTypeUsage)
 
 	catalogScanType := StringFlagWithShortName("title-language",
 		"l",
-		"html",
-		"扫描文件的标题语法类型，可以为html或md")
+		catalogScanTypeDefault,
+		catalogScanTypeUsage)
 
 	catalogIndent := StringFlagWithShortName("indent",
 		"i",
-		"  ",
-		"目录的缩进，默认为2空格(使用prettyprint或output为md时不支持)")
+		catalogIndentDefault,
+		catalogIndentUsage)
 
-	writeBack := flag.Bool("w", false, "是否将目录写入文件指定位置")
+	writeBack := flag.Bool("w", false, writeBackUsage)
 	tocMark := StringFlagWithShortName("toc-mark",
 		"m",
-		"[TOC]",
-		"指定文件中写入目录的位置")
+		tocMarkDefault,
+		tocMarkUsage)
 
 	flag.Parse()
 	if len(flag.Args()) == 0 {
 		fmt.Fprint(os.Stderr, "错误：需要一个输入文件。\n")
-		os.Exit(1)
+		flag.Usage()
 	}
 	// 终端可能无法直接输入tab，所以用\t代替
 	if *catalogIndent == "\\t" {

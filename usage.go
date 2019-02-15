@@ -33,6 +33,7 @@ const (
 var usage = fmt.Sprintf(`Usage: %s [option]... <file>
 
 读入file，根据其内容生成目录结构。
+未提供file参数时默认读取stdin。
 
 可选参数：
 -t string, --top-tag string

@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"syscall"
+
+	"golang.org/x/crypto/ssh/terminal"
 
 	"github.com/apocelipes/markdown-catalog-generator/format"
 	"github.com/apocelipes/markdown-catalog-generator/parser"
@@ -55,28 +58,45 @@ func main() {
 		tocMarkUsage)
 
 	flag.Parse()
+
+	var err error
+	var f *os.File
 	if len(flag.Args()) == 0 {
-		fmt.Fprint(os.Stderr, "错误：需要一个输入文件。\n")
-		flag.Usage()
+		// 未提供文件名参数时判断是否处于pipe中，是则stdin为输入文件
+		if terminal.IsTerminal(syscall.Stdin) {
+			fmt.Fprint(os.Stderr, "错误：需要一个输入文件。\n")
+			flag.Usage()
+		}
+
+		if *writeBack {
+			fmt.Fprintln(os.Stderr, "-w不能在输入为stdin时使用")
+			os.Exit(1)
+		}
+
+		f = os.Stdin
+	} else {
+		if !*writeBack {
+			f, err = os.Open(flag.Arg(0))
+		} else {
+			f, err = os.OpenFile(flag.Arg(0), os.O_RDWR, 0644)
+		}
+		if err != nil {
+			panic(err)
+		}
+		defer f.Close()
 	}
+
 	// 终端可能无法直接输入tab，所以用\t代替
 	if *catalogIndent == "\\t" {
 		*catalogIndent = "\t"
 	}
 
-	var err error
-	var f *os.File
-	if !*writeBack {
-		f, err = os.Open(flag.Arg(0))
-	} else {
-		f, err = os.OpenFile(flag.Arg(0), os.O_RDWR, 0644)
-	}
-	if err != nil {
-		panic(err)
-	}
-	defer f.Close()
-
 	ret := parser.MarkdownParser(f, *topTag, *catalogScanType)
+	if len(ret) == 0 {
+		fmt.Fprintln(os.Stderr, "未找到任何标题。")
+		os.Exit(1)
+	}
+
 	var data string
 	switch *catalogOutputType {
 	case "html":

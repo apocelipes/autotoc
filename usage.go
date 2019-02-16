@@ -12,7 +12,7 @@ const (
 	catalogIdUsage         = "目录的html id(output为markdown时不支持)"
 	catalogTitleUsage      = "目录的标题"
 	catalogOutputTypeUsage = "输出的目录格式，可以为html或md(markdown)"
-	catalogScanTypeUsage   = "扫描文件的标题语法类型，可以为html或md"
+	catalogScanTypeUsage   = "扫描文件的标题语法类型，可以为html，md或multi（multi同时支持所有type）"
 	catalogIndentUsage     = "目录的缩进，默认为2空格(使用gohtml时不支持)，输入\\t以替代tab"
 	writeBackUsage         = "是否将目录写入文件指定位置"
 	tocMarkUsage           = "指定文件中写入目录的位置"

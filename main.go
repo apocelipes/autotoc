@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"syscall"
 
 	"golang.org/x/crypto/ssh/terminal"
 
@@ -63,7 +62,7 @@ func main() {
 	var f *os.File
 	if len(flag.Args()) == 0 {
 		// 未提供文件名参数时判断是否处于pipe中，是则stdin为输入文件
-		if terminal.IsTerminal(syscall.Stdin) {
+		if terminal.IsTerminal(int(os.Stdin.Fd())) {
 			fmt.Fprint(os.Stderr, "错误：需要一个输入文件。\n")
 			flag.Usage()
 		}

@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"unicode"
 )
 
 // MarkdownParser 根据topTag和scanType解析文件中的标题行
@@ -79,13 +80,25 @@ func getHtmlParser(topTag string) *regexp.Regexp {
 
 // parseRawTitle 解析markdown语法标题为TitleNode
 // 标题需要为单独的一行，例如"## Title"
-// FIXME 中文字符作为html tag的id时未做浏览器兼容性测试，谨慎使用
 func parseRawTitle(reg *regexp.Regexp, line string) *TitleNode {
 	tag := reg.FindStringSubmatch(line)[1]
 	tagName := fmt.Sprintf("h%d", strings.Count(tag, "#"))
 	// markdown语法的标题自动添加与标题内容相同的id作为锚
 	content := reg.FindStringSubmatch(line)[2]
-	id := content
+
+	// 如果content含有非字母/数字内容，则删除，多余一个的space字符删减至一个空格并替换为“-”
+	id := strings.Map(func(r rune) rune {
+		if unicode.IsSpace(r) {
+			return '-'
+		}
+
+		if !unicode.IsLetter(r) && !unicode.IsNumber(r) && r != '-' {
+			return -1
+		}
+
+		return r
+	}, content)
+	id = regexp.MustCompile(`-{2,}`).ReplaceAllString(id, "-")
 
 	return NewTitleNode(tagName, id, content)
 }

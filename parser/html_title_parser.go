@@ -3,6 +3,9 @@ package parser
 import (
 	"fmt"
 	"regexp"
+	"strings"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 // 解析html格式的title
@@ -42,7 +45,9 @@ func (h *htmlTitleParser) Parse(content string) *TitleNode {
 func (h *htmlTitleParser) parseTitle(line string) *TitleNode {
 	tagName := h.reg.FindStringSubmatch(line)[1]
 	id := h.reg.FindStringSubmatch(line)[2]
-	content := h.reg.FindStringSubmatch(line)[3]
+	// 处理html嵌套tag中的文本内容
+	doc, _ := goquery.NewDocumentFromReader(strings.NewReader(line))
+	content := doc.Text()
 
 	return NewTitleNode(tagName, id, content)
 }
@@ -55,7 +60,7 @@ func (h *htmlTitleParser) getRegexp() *regexp.Regexp {
 	}
 
 	titleSize := titleTagParser.FindStringSubmatch(h.topTag)[1]
-	regFormat := `^<(h[%s-5]) id="(.+)">(.+)</h[%s-5]>$`
+	regFormat := `^<(h[%s-5]) id="(.+?)">(.+)</h[%s-5]>$`
 	reg := fmt.Sprintf(regFormat, titleSize, titleSize)
 	return regexp.MustCompile(reg)
 }

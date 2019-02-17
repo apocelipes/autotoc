@@ -1,6 +1,7 @@
 module github.com/apocelipes/markdown-catalog-generator
 
 require (
+	github.com/PuerkitoBio/goquery v1.5.0
 	github.com/hermanschaaf/prettyprint v0.0.0-20151019092546-de00933accbc
 	github.com/yosssi/gohtml v0.0.0-20190128141317-9b7db94d32d9
 	golang.org/x/crypto v0.0.0-20190211182817-74369b46fc67

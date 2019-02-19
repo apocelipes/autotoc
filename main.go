@@ -90,7 +90,7 @@ func main() {
 		*catalogIndent = "\t"
 	}
 
-	ret := parser.ParseMarkdown(f, *topTag, *catalogScanType)
+	ret := parser.ParseMarkdown(f, *topTag, *catalogScanType, *tocMark)
 	if len(ret) == 0 {
 		fmt.Fprintln(os.Stderr, "未找到任何标题。")
 		os.Exit(1)

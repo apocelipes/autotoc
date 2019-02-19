@@ -38,7 +38,8 @@ func GetParser(name, topTag string) TitleParser {
 }
 
 // ParseMarkdown 根据topTag和scanType解析文件中的标题行
-func ParseMarkdown(file io.Reader, topTag, scanType string) []*TitleNode {
+// 默认从tocMark之后的位置开始解析，如果没有找到tocMark则解析整个markdown文件
+func ParseMarkdown(file io.Reader, topTag, scanType, tocMark string) []*TitleNode {
 	scanner := bufio.NewScanner(file)
 	ret := make([]*TitleNode, 0)
 
@@ -50,6 +51,13 @@ func ParseMarkdown(file io.Reader, topTag, scanType string) []*TitleNode {
 	var parent *TitleNode
 	for scanner.Scan() {
 		line := scanner.Text()
+		// 如果遇到tocMark就重新构建节点树
+		if line == tocMark {
+			ret = make([]*TitleNode, 0)
+			parent = nil
+			continue
+		}
+
 		node := parser.Parse(line)
 		if node != nil {
 			if parent == nil || !parent.IsChildNode(node) {

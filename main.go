@@ -8,8 +8,8 @@ import (
 
 	"golang.org/x/crypto/ssh/terminal"
 
-	"github.com/apocelipes/markdown-catalog-generator/format"
-	"github.com/apocelipes/markdown-catalog-generator/parser"
+	"github.com/apocelipes/autotoc/format"
+	"github.com/apocelipes/autotoc/parser"
 )
 
 func main() {

@@ -1,4 +1,4 @@
-module github.com/apocelipes/markdown-catalog-generator
+module github.com/apocelipes/autotoc
 
 require (
 	github.com/PuerkitoBio/goquery v1.5.0

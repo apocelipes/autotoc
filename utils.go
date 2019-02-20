@@ -5,6 +5,7 @@ import (
 	"flag"
 	"io"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -18,7 +19,12 @@ func StringFlagWithShortName(longName, shortName, defaultValue, usage string) *s
 
 // 将目录写回文件指定位置
 func WriteBackFile(catalog, tocMark string, file *os.File) error {
-	backupName := ".backup_" + file.Name()
+	filePath, err := filepath.Abs(file.Name())
+	if err != nil {
+		return err
+	}
+	backupName := filepath.Join(filepath.Dir(filePath),
+		".backup_"+filepath.Base(filePath))
 	backup, err := os.OpenFile(backupName, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
 	if err != nil {
 		return err

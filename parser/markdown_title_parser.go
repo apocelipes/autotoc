@@ -57,7 +57,7 @@ func (m *markdownTitleParser) getRegexp() *regexp.Regexp {
 		return nil
 	}
 
-	reg := fmt.Sprintf(`^(#{%d,5}) (.+)$`, titleSize)
+	reg := fmt.Sprintf(`^(#{%d,6}) (.+)$`, titleSize)
 	return regexp.MustCompile(reg)
 }
 

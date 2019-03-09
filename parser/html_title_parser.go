@@ -54,13 +54,13 @@ func (h *htmlTitleParser) parseTitle(line string) *TitleNode {
 
 // 根据topTag生成相应的正则表达式
 func (h *htmlTitleParser) getRegexp() *regexp.Regexp {
-	titleTagParser := regexp.MustCompile(`^h([1-5])$`)
+	titleTagParser := regexp.MustCompile(`^h([1-6])$`)
 	if !titleTagParser.MatchString(h.topTag) {
 		return nil
 	}
 
 	titleSize := titleTagParser.FindStringSubmatch(h.topTag)[1]
-	regFormat := `^<(h[%s-5]) id="(.+?)">(.+)</h[%s-5]>$`
+	regFormat := `^<(h[%s-6]) id="(.+?)">(.+)</h[%s-6]>$`
 	reg := fmt.Sprintf(regFormat, titleSize, titleSize)
 	return regexp.MustCompile(reg)
 }

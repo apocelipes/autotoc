@@ -25,7 +25,7 @@ const (
 	catalogIdDefault         = "bookmark"
 	catalogTitleDefault      = "本文索引"
 	catalogOutputTypeDefault = "html"
-	catalogScanTypeDefault   = "html"
+	catalogScanTypeDefault   = "multi"
 	catalogIndentDefault     = "  " // 2 space
 	tocMarkDefault           = "[TOC]"
 )

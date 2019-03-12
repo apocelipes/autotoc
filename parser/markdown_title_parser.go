@@ -64,6 +64,11 @@ func (m *markdownTitleParser) getRegexp() *regexp.Regexp {
 // parseTitle 解析markdown语法标题为TitleNode
 // 标题需要为单独的一行，例如"## Title"
 func (m *markdownTitleParser) parseTitle(line string) *TitleNode {
+	//TODO 可选参考信息作为独立标题结构或被过滤
+	if line == "##### 参考" {
+		return nil
+	}
+
 	tag := m.reg.FindStringSubmatch(line)[1]
 	tagName := fmt.Sprintf("h%d", strings.Count(tag, "#"))
 	// markdown语法的标题自动添加与标题内容相同的id作为锚

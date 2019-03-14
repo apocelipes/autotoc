@@ -67,7 +67,7 @@ func (h *htmlTitleParser) getRegexp() *regexp.Regexp {
 
 	titleSize := titleTagParser.FindStringSubmatch(h.topTag)[1]
 	// golang的regexp不支持反向引用，html tag的开闭标签名必须一样
-	regFormat := `^<(h[%s-6]).+?id="(.+?)".*?>(.+)</(h[%s-6])>$`
+	regFormat := `^<(h[%s-6])[^>]+?id="(.+?)"[^>]*?>(.+)</(h[%s-6])>$`
 	reg := fmt.Sprintf(regFormat, titleSize, titleSize)
 	return regexp.MustCompile(reg)
 }

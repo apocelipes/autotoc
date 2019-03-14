@@ -20,7 +20,7 @@ func init() {
 
 var (
 	// 匹配html tag
-	htmlTagMatcher = regexp.MustCompile(`</?([a-zA-Z]|[a-zA-Z]+[0-9]+)+ ?.*?>`)
+	htmlTagMatcher = regexp.MustCompile(`</?([a-zA-Z]|[a-zA-Z]+[0-9]+)+\s?[^>]*?>`)
 	// 匹配全部由下划线组成的字符串
 	allUnderlineMatcher = regexp.MustCompile(`^_+$`)
 	// 匹配非下划线开头和结尾的，中间包含任意字符（包括下划线）的字符串（通常为单词或字母加数字）

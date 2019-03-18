@@ -16,6 +16,9 @@ const (
 	catalogIndentUsage     = "目录的缩进，默认为2空格(使用gohtml时不支持)，输入\\t以替代tab"
 	writeBackUsage         = "是否将目录写入文件指定位置"
 	tocMarkUsage           = "指定文件中写入目录的位置"
+	excludeTitleUsage      = "过滤掉内容等于参数指定值的标题"
+	excludeFilterUsage     = "过滤掉内容和参数指定的表达式匹配的标题"
+	noExcludeUsage         = "不过滤任何标题"
 )
 
 // 字符串参数的默认值
@@ -28,6 +31,8 @@ const (
 	catalogScanTypeDefault   = "multi"
 	catalogIndentDefault     = "  " // 2 space
 	tocMarkDefault           = "[TOC]"
+	excludeTitleDefault      = "参考"
+	excludeFilterDefault     = ""
 )
 
 var usage = fmt.Sprintf(`Usage: %s [option]... <file>
@@ -52,7 +57,12 @@ var usage = fmt.Sprintf(`Usage: %s [option]... <file>
 	%s (default: 2空格)
 -m string, --toc-mark string
 	%s (default: "%s")
+--exclude-title=[title1,title2]
+	%s (default: "%s")
+--exclude-filter=[pattern]
+	%s (default: "%s")
 -w	%s
+--no-exclude	%s
 -h, --help	显示本帮助信息并终止程序
 `,
 	os.Args[0],
@@ -64,4 +74,7 @@ var usage = fmt.Sprintf(`Usage: %s [option]... <file>
 	catalogScanTypeUsage, catalogScanTypeDefault,
 	catalogIndentUsage,
 	tocMarkUsage, tocMarkDefault,
-	writeBackUsage)
+	excludeTitleUsage, excludeTitleDefault,
+	excludeFilterUsage, excludeFilterDefault,
+	writeBackUsage,
+	noExcludeUsage)

@@ -56,6 +56,14 @@ func main() {
 		tocMarkDefault,
 		tocMarkUsage)
 
+	excludeTitle := flag.String("exclude-title",
+		excludeTitleDefault,
+		excludeTitleUsage)
+	excludeFilter := flag.String("exclude-filter",
+		excludeFilterDefault,
+		excludeFilterUsage)
+	noExclude := flag.Bool("no-exclude", false, noExcludeUsage)
+
 	flag.Parse()
 
 	var err error
@@ -90,7 +98,25 @@ func main() {
 		*catalogIndent = "\t"
 	}
 
-	ret := parser.ParseMarkdown(f, *topTag, *catalogScanType, *tocMark)
+	option := parser.ParseOption{
+		TopTag:   *topTag,
+		ScanType: *catalogScanType,
+		TocMark:  *tocMark,
+	}
+
+	if !*noExclude {
+		titleFilter := &parser.DefaultFilter{}
+		titleFilter.SetExcludeTitles(*excludeTitle)
+		if *excludeFilter != "" {
+			if err := titleFilter.SetExcludeRegExp(*excludeFilter); err != nil {
+				fmt.Fprintln(os.Stderr, "parse exclude-filter error: "+err.Error())
+				os.Exit(1)
+			}
+		}
+		option.Filter = titleFilter
+	}
+
+	ret := parser.ParseMarkdown(f, &option)
 	if len(ret) == 0 {
 		fmt.Fprintln(os.Stderr, "未找到任何标题。")
 		os.Exit(1)

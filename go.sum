@@ -4,8 +4,6 @@ github.com/andybalholm/cascadia v1.0.0 h1:hOCXnnZ5A+3eVDX8pvgl4kofXv2ELss0bKcqRy
 github.com/andybalholm/cascadia v1.0.0/go.mod h1:GsXiBklL0woXo1j/WYWtSYYC4ouU9PqHO0sqidkEA4Y=
 github.com/hermanschaaf/prettyprint v0.0.0-20151019092546-de00933accbc h1:apM7oQ/juw7MnmwRt2VnNVNaJshu/BDPlf0oxYNhfc8=
 github.com/hermanschaaf/prettyprint v0.0.0-20151019092546-de00933accbc/go.mod h1:ikK4ubbDyo7AJQ19JMJMtCazx4YE05ekila214o5CGY=
-github.com/yosssi/gohtml v0.0.0-20190128141317-9b7db94d32d9 h1:fy3FCd+9/SnyVcESUaZ12rrx3qg3jcxFqP6x4iOuJ2s=
-github.com/yosssi/gohtml v0.0.0-20190128141317-9b7db94d32d9/go.mod h1:+ccdNT0xMY1dtc5XBxumbYfOUhmduiGudqaDgD2rVRE=
 golang.org/x/crypto v0.0.0-20190211182817-74369b46fc67 h1:ng3VDlRp5/DHpSWl02R4rM9I+8M2rhmsuLwAMmkLQWE=
 golang.org/x/crypto v0.0.0-20190211182817-74369b46fc67/go.mod h1:6SG95UA2DQfeDnfUPMdvaQW0Q7yPrPDi9nlGo2tz2b4=
 golang.org/x/net v0.0.0-20180218175443-cbe0f9307d01/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=

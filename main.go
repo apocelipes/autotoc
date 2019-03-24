@@ -138,7 +138,7 @@ func main() {
 		md.WriteString("#### " + *catalogTitle + ":\n")
 		for _, v := range ret {
 			// each parent has no indent
-			md.WriteString(v.Markdown(*catalogIndent, true))
+			md.WriteString(v.Markdown(*catalogIndent, 0))
 		}
 
 		data = md.String()

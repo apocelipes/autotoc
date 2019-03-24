@@ -50,13 +50,13 @@ func ParseMarkdown(file io.Reader, option *ParseOption) []*TitleNode {
 			option.TopTag, option.ScanType))
 	}
 
-	var parent *TitleNode
+	parents := NewParentStack()
 	for scanner.Scan() {
 		line := scanner.Text()
 		// 如果遇到tocMark就重新构建节点树
 		if line == option.TocMark {
 			ret = make([]*TitleNode, 0)
-			parent = nil
+			parents.Clear()
 			continue
 		}
 
@@ -66,8 +66,17 @@ func ParseMarkdown(file io.Reader, option *ParseOption) []*TitleNode {
 				continue
 			}
 
-			if parent == nil || !parent.IsChildNode(node) {
-				parent = node
+			parent, _ := parents.Top().(*TitleNode)
+
+			// 找到自己的父节点，排除所有同级或下级标题
+			for parent != nil && !parent.IsChildNode(node) {
+				parents.Pop()
+				parent, _ = parents.Top().(*TitleNode)
+			}
+
+			// 因为不知道是否存在子节点，所以都当做拥有子节点并入栈
+			parents.Push(node)
+			if parent == nil {
 				ret = append(ret, node)
 				continue
 			}

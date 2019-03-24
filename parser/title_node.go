@@ -76,10 +76,10 @@ func (t *TitleNode) Html() string {
 }
 
 // 生成当前节点及其子节点的markdown
-// isRoot为true表示当前节点没有父节点，因此不设置缩进，只设置其子节点的缩进
-func (t *TitleNode) Markdown(indent string, isRoot bool) string {
+// depth为0表示当前节点没有父节点，因此不设置缩进，只设置其子节点的缩进
+func (t *TitleNode) Markdown(indent string, depth int) string {
 	if !t.hasChild() {
-		if isRoot {
+		if depth == 0 {
 			return fmt.Sprintf(catalogMarkdownTemplate, t.content, t.id)
 		}
 
@@ -87,13 +87,14 @@ func (t *TitleNode) Markdown(indent string, isRoot bool) string {
 	}
 
 	md := strings.Builder{}
-	if isRoot {
+	if depth == 0 {
 		md.WriteString(fmt.Sprintf(catalogMarkdownTemplate, t.content, t.id))
 	} else {
 		md.WriteString(fmt.Sprintf(indent+catalogMarkdownTemplate, t.content, t.id))
 	}
+
 	for _, child := range t.children {
-		md.WriteString(child.Markdown(indent, false))
+		md.WriteString(child.Markdown(strings.Repeat(indent, depth+1), depth+1))
 	}
 
 	return md.String()

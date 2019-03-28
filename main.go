@@ -144,13 +144,14 @@ func main() {
 		data = md.String()
 	}
 
-	if !*writeBack {
-		fmt.Println(data)
+	if *writeBack {
+		err = WriteBackFile(data, *tocMark, f)
+		if err != nil {
+			panic(err)
+		}
+
 		return
 	}
 
-	err = WriteBackFile(data, *tocMark, f)
-	if err != nil {
-		panic(err)
-	}
+	fmt.Println(data)
 }

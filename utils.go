@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-// 返回一个绑定了长参数名和短参数名的flag处理器
+// StringFlagWithShortName 返回一个绑定了长参数名和短参数名的flag处理器
 func StringFlagWithShortName(longName, shortName, defaultValue, usage string) *string {
 	p := flag.String(longName, defaultValue, usage)
 	flag.StringVar(p, shortName, defaultValue, usage)
@@ -17,7 +17,7 @@ func StringFlagWithShortName(longName, shortName, defaultValue, usage string) *s
 	return p
 }
 
-// 将目录写回文件指定位置
+// WriteBackFile 将目录写回文件指定位置
 func WriteBackFile(catalog, tocMark string, file *os.File) error {
 	filePath, err := filepath.Abs(file.Name())
 	if err != nil {

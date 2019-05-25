@@ -9,7 +9,7 @@ import (
 const (
 	topTagUsage            = "设置作为目录顶层项的tag，将从指定tag开始解析标题"
 	formatterUsage         = "选择格式化html代码的方式，目前只支持default和prettyprint(output为markdown时不支持)"
-	catalogIdUsage         = "目录的html id(output为markdown时不支持)"
+	catalogIDUsage         = "目录的html id(output为markdown时不支持)"
 	catalogTitleUsage      = "目录的标题"
 	catalogOutputTypeUsage = "输出的目录格式，可以为html或md(markdown)"
 	catalogScanTypeUsage   = "扫描文件的标题语法类型，可以为html，md或multi（multi同时支持所有type）"
@@ -25,7 +25,7 @@ const (
 const (
 	topTagDefault            = "h2"
 	formatterDefault         = "default"
-	catalogIdDefault         = "bookmark"
+	catalogIDDefault         = "bookmark"
 	catalogTitleDefault      = "本文索引"
 	catalogOutputTypeDefault = "html"
 	catalogScanTypeDefault   = "multi"
@@ -68,7 +68,7 @@ var usage = fmt.Sprintf(`Usage: %s [option]... <file>
 	os.Args[0],
 	topTagUsage, topTagDefault,
 	formatterUsage, formatterDefault,
-	catalogIdUsage, catalogIdDefault,
+	catalogIDUsage, catalogIDDefault,
 	catalogTitleUsage, catalogTitleDefault,
 	catalogOutputTypeUsage, catalogOutputTypeDefault,
 	catalogScanTypeUsage, catalogScanTypeDefault,

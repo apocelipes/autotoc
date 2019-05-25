@@ -28,9 +28,9 @@ func main() {
 		formatterDefault,
 		formatterUsage)
 
-	catalogId := flag.String("catalog-id",
-		catalogIdDefault,
-		catalogIdUsage)
+	catalogID := flag.String("catalog-id",
+		catalogIDDefault,
+		catalogIDUsage)
 	catalogTitle := flag.String("title",
 		catalogTitleDefault,
 		catalogTitleUsage)
@@ -129,10 +129,10 @@ func main() {
 		for _, v := range ret {
 			html.WriteString(v.Html())
 		}
-		data = format.RenderCatalog(*catalogId, *catalogTitle, html.String())
+		data = format.RenderCatalog(*catalogID, *catalogTitle, html.String())
 
-		formatHtmlFunc := format.NewFormatter(*formatter)
-		data = formatHtmlFunc(data, *catalogIndent)
+		formatHTMLFunc := format.NewFormatter(*formatter)
+		data = formatHTMLFunc(data, *catalogIndent)
 	case "md":
 		md := strings.Builder{}
 		md.WriteString("#### " + *catalogTitle + ":\n")

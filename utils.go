@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"flag"
 	"io"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -15,6 +16,59 @@ func StringFlagWithShortName(longName, shortName, defaultValue, usage string) *s
 	flag.StringVar(p, shortName, defaultValue, usage)
 
 	return p
+}
+
+// WriteCatalog 控制目录和文件信息的写入方向
+func WriteCatalog(source *os.File, catalog, tocMark string, outputStdout bool) error {
+	if outputStdout {
+		return WriteStdout(catalog, tocMark, source)
+	}
+
+	return WriteBackFile(catalog, tocMark, source)
+}
+
+func hasTocMark(file *os.File, tocMark string) bool {
+	scanner := bufio.NewScanner(file)
+	defer file.Seek(0, 0)
+	for scanner.Scan() {
+		line := scanner.Text()
+		if line == tocMark {
+			return true
+		}
+	}
+
+	return false
+}
+
+// 将catalog拼接到文件内容的tocMark处，
+// 如果文件内容中不存在tocMark，就拼接在内容的开头
+func concatCatalog(hasToc bool, catalog, tocMark, fileData string) string {
+	if hasToc {
+		return strings.Replace(fileData, tocMark, catalog, 1)
+	}
+
+	return catalog + fileData
+}
+
+func combine2File(file *os.File, catalog, tocMark string) (string, error) {
+	file.Seek(0, 0)
+	hasToc := hasTocMark(file, tocMark)
+	data, err := ioutil.ReadAll(file)
+	if err != nil {
+		return "", err
+	}
+	return concatCatalog(hasToc, catalog, tocMark, string(data)), nil
+}
+
+// WriteStdout 将目录和文件内容写入标准输出
+func WriteStdout(catalog, tocMark string, source *os.File) error {
+	data, err := combine2File(source, catalog, tocMark)
+	if err != nil {
+		return err
+	}
+
+	_, err = os.Stdout.WriteString(data)
+	return err
 }
 
 // WriteBackFile 将目录写回文件指定位置
@@ -36,17 +90,9 @@ func WriteBackFile(catalog, tocMark string, file *os.File) error {
 		return err
 	}
 
-	file.Seek(0, 0)
-	scanner := bufio.NewScanner(file)
-	buffer := strings.Builder{}
-	for scanner.Scan() {
-		line := scanner.Text()
-		if line == tocMark {
-			buffer.WriteString(catalog + "\n")
-			continue
-		}
-
-		buffer.WriteString(line + "\n")
+	fullData, err := combine2File(file, catalog, tocMark)
+	if err != nil {
+		return err
 	}
 
 	err = file.Truncate(0)
@@ -54,7 +100,7 @@ func WriteBackFile(catalog, tocMark string, file *os.File) error {
 	if err != nil {
 		return err
 	}
-	_, err = file.WriteString(buffer.String())
+	_, err = file.WriteString(fullData)
 	if err != nil {
 		return err
 	}

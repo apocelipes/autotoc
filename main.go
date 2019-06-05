@@ -64,6 +64,8 @@ func main() {
 		excludeFilterUsage)
 	noExclude := flag.Bool("no-exclude", false, noExcludeUsage)
 
+	fullOutput := flag.Bool("full", false, fullOutputUsage)
+
 	flag.Parse()
 
 	var err error
@@ -144,8 +146,8 @@ func main() {
 		data = md.String()
 	}
 
-	if *writeBack {
-		err = WriteBackFile(data, *tocMark, f)
+	if *writeBack || *fullOutput {
+		err = WriteCatalog(f, data, *tocMark, *fullOutput)
 		if err != nil {
 			panic(err)
 		}

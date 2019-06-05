@@ -49,6 +49,7 @@ Usage: ./autotoc [option]... <file>
 --exclude-filter=[pattern]
         过滤掉内容和参数指定的表达式匹配的标题 (default: "")
 -w      是否将目录写入文件指定位置
+--full  是否将目录和文章信息组合后一同输出
 --no-exclude    不过滤任何标题
 -h, --help      显示本帮助信息并终止程序
 ```

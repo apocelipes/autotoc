@@ -44,6 +44,8 @@ func hasTocMark(file *os.File, tocMark string) bool {
 // 如果文件内容中不存在tocMark，就拼接在内容的开头
 func concatCatalog(hasToc bool, catalog, tocMark, fileData string) string {
 	if hasToc {
+		// 先删除catalog多余的换行符，因为tocMark所在位置已经存在一个换行符
+		catalog = strings.TrimRight(catalog, "\n")
 		return strings.Replace(fileData, tocMark, catalog, 1)
 	}
 

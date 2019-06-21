@@ -137,7 +137,7 @@ func main() {
 		data = formatHTMLFunc(data, *catalogIndent)
 	case "md":
 		md := strings.Builder{}
-		md.WriteString("#### " + *catalogTitle + ":\n")
+		md.WriteString("#### " + *catalogTitle + "\n\n")
 		for _, v := range ret {
 			// each parent has no indent
 			md.WriteString(v.Markdown(*catalogIndent, 0))

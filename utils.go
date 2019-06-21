@@ -85,12 +85,13 @@ func WriteBackFile(catalog, tocMark string, file *os.File) error {
 	if err != nil {
 		return err
 	}
-	defer backup.Close()
+
 	file.Seek(0, 0)
 	_, err = io.Copy(backup, file)
 	if err != nil {
 		return err
 	}
+	backup.Close()
 
 	fullData, err := combine2File(file, catalog, tocMark)
 	if err != nil {
@@ -106,8 +107,12 @@ func WriteBackFile(catalog, tocMark string, file *os.File) error {
 	if err != nil {
 		return err
 	}
+
 	// 成功写回，删除备份
-	os.Remove(backupName)
+	err = os.Remove(backupName)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

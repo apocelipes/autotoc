@@ -66,6 +66,10 @@ func ParseMarkdown(file io.Reader, option *ParseOption) []*TitleNode {
 				continue
 			}
 
+			if option.Encoder != nil {
+				node.id = option.Encoder(node.id)
+			}
+
 			parent, _ := parents.Top().(*TitleNode)
 
 			// 找到自己的父节点，排除所有同级或下级标题

@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"net/url"
 	"os"
 	"strings"
 
@@ -66,6 +67,8 @@ func main() {
 
 	fullOutput := flag.Bool("full", false, fullOutputUsage)
 
+	noEncode := flag.Bool("no-encode", false, noEncodeUsage)
+
 	flag.Parse()
 
 	var err error
@@ -116,6 +119,10 @@ func main() {
 			}
 		}
 		option.Filter = titleFilter
+	}
+
+	if !*noEncode {
+		option.Encoder = url.PathEscape
 	}
 
 	ret := parser.ParseMarkdown(f, &option)

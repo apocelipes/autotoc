@@ -20,6 +20,7 @@ const (
 	excludeFilterUsage     = "过滤掉内容和参数指定的表达式匹配的标题"
 	noExcludeUsage         = "不过滤任何标题"
 	fullOutputUsage        = "是否将目录和文章信息组合后一同输出"
+	noEncodeUsage          = "禁止将标题按URL格式进行编码"
 )
 
 // 字符串参数的默认值
@@ -65,6 +66,7 @@ var usage = fmt.Sprintf(`Usage: %s [option]... <file>
 -w	%s
 --full	%s
 --no-exclude	%s
+--no-encode	%s
 -h, --help	显示本帮助信息并终止程序
 `,
 	os.Args[0],
@@ -80,4 +82,5 @@ var usage = fmt.Sprintf(`Usage: %s [option]... <file>
 	excludeFilterUsage, excludeFilterDefault,
 	writeBackUsage,
 	fullOutputUsage,
-	noExcludeUsage)
+	noExcludeUsage,
+	noEncodeUsage)

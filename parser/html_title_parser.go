@@ -14,11 +14,14 @@ type htmlTitleParser struct {
 	reg    *regexp.Regexp
 }
 
+// HTMLTitleParserName name of HTMLTitleParser for the parser factory
+const HTMLTitleParserName = "html"
+
 func init() {
-	SetParser("html", newHtmlTitleParser)
+	SetParser(HTMLTitleParserName, newHTMLTitleParser)
 }
 
-func newHtmlTitleParser(topTag string) TitleParser {
+func newHTMLTitleParser(topTag string) TitleParser {
 	parser := &htmlTitleParser{topTag: topTag}
 	parser.reg = parser.getRegexp()
 	if parser.reg == nil {
@@ -58,7 +61,7 @@ func (h *htmlTitleParser) parseTitle(line string) *TitleNode {
 	return NewTitleNode(tagName, id, content)
 }
 
-// 根据topTag生成相应的正则表达式
+// getRegexp 根据topTag生成相应的正则表达式
 func (h *htmlTitleParser) getRegexp() *regexp.Regexp {
 	titleTagParser := regexp.MustCompile(`^h([1-6])$`)
 	if !titleTagParser.MatchString(h.topTag) {

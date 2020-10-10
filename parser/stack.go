@@ -5,10 +5,12 @@ type ParentStack struct {
 	parents []interface{}
 }
 
+const defaultCacheSize = 10
+
 // NewParentStack 返回ParentStack，设置第一个元素为nil，用作扫描的初始化状态
 func NewParentStack() *ParentStack {
 	return &ParentStack{
-		parents: make([]interface{}, 0),
+		parents: make([]interface{}, 0, defaultCacheSize),
 	}
 }
 
@@ -37,5 +39,5 @@ func (s *ParentStack) Clear() {
 		return
 	}
 
-	s.parents = make([]interface{}, 0)
+	s.parents = make([]interface{}, 0, defaultCacheSize)
 }

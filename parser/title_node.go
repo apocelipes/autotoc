@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-// 标题节点，按顶层标签构建的节点树
+// TitleNode 标题节点，按顶层标签构建的节点树
 // 节点树的生长方向是单一的固定的，
 // 假设节点按从左向右生长则最新添加的子节点一定在最右或者是最右子节点的后代
 type TitleNode struct {
@@ -18,6 +18,7 @@ type TitleNode struct {
 	children []*TitleNode
 }
 
+// NewTitleNode 创建新节点，tag是html tag名称
 func NewTitleNode(tag, id, content string) *TitleNode {
 	return &TitleNode{
 		tagName:  tag,
@@ -27,7 +28,7 @@ func NewTitleNode(tag, id, content string) *TitleNode {
 	}
 }
 
-// 添加子节点
+// AddChild 添加子节点
 // 如果不是直接后代则作为最后一个直接子节点的孩子被添加
 func (t *TitleNode) AddChild(child *TitleNode) {
 	if !t.hasChild() {
@@ -45,7 +46,7 @@ func (t *TitleNode) AddChild(child *TitleNode) {
 	t.children = append(t.children, child)
 }
 
-// 检查node是否是当前节点的子节点
+// IsChildNode 检查node是否是当前节点的子节点
 // 按tagName比较：h1 > h2 > ... > h5
 // 因为markdown被顺序解析，所以tag更小意味着它是当前节点的子节点
 func (t *TitleNode) IsChildNode(node *TitleNode) bool {
@@ -57,8 +58,8 @@ func (t *TitleNode) hasChild() bool {
 	return len(t.children) != 0
 }
 
-// 生成当前节点及其子节点的html
-func (t *TitleNode) Html() string {
+// HTML 生成当前节点及其子节点的html
+func (t *TitleNode) HTML() string {
 	if !t.hasChild() {
 		return fmt.Sprintf(catalogItemTemplate, t.id, t.content)
 	}
@@ -67,7 +68,7 @@ func (t *TitleNode) Html() string {
 	html.WriteString(fmt.Sprintf(catalogItemWithChildren, t.id, t.content))
 	html.WriteString("<ul>\n")
 	for _, child := range t.children {
-		html.WriteString(child.Html())
+		html.WriteString(child.HTML())
 	}
 	html.WriteString("</ul>\n")
 	html.WriteString("</li>\n")
@@ -75,7 +76,7 @@ func (t *TitleNode) Html() string {
 	return html.String()
 }
 
-// 生成当前节点及其子节点的markdown
+// Markdown 生成当前节点及其子节点的markdown
 // depth为0表示当前节点没有父节点，因此不设置缩进，只设置其子节点的缩进
 func (t *TitleNode) Markdown(indent string, depth int) string {
 	if !t.hasChild() {

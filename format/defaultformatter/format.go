@@ -1,4 +1,4 @@
-package defaultFormatter
+package defaultformatter
 
 import (
 	"io"
@@ -63,7 +63,7 @@ func parseHtml(t *html.Tokenizer, ret *HtmlElement, stack *parser.ParentStack) e
 	}
 }
 
-// 格式化html
+// FormatHtml 格式化html
 func FormatHtml(data, indent string) (string, error) {
 	t := html.NewTokenizer(strings.NewReader(data))
 	ret := NewHtmlElement(nil)

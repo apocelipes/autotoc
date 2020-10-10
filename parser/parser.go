@@ -6,20 +6,20 @@ import (
 	"io"
 )
 
-// 解析文件中的标题结构
+// TitleParser 解析文件中的标题结构
 type TitleParser interface {
 	// content如果不是标题就返回nil，否则返回TitleNode
 	Parse(content string) *TitleNode
 }
 
-// 创建parser的函数类型，接受一个string作为顶层标题结构
-type ParserCreator func(string) TitleParser
+// Creator 创建parser的函数类型，接受一个string作为顶层标题结构，被SetParser调用
+type Creator func(string) TitleParser
 
 // 存储所有TitleParser的creator
-var parserCreators = make(map[string]ParserCreator)
+var parserCreators = make(map[string]Creator)
 
-// 注册新的解析器
-func SetParser(name string, creator ParserCreator) {
+// SetParser 注册新的解析器
+func SetParser(name string, creator Creator) {
 	if name == "" || creator == nil {
 		panic("name or creator should not be empty")
 	}
@@ -27,7 +27,7 @@ func SetParser(name string, creator ParserCreator) {
 	parserCreators[name] = creator
 }
 
-// 根据name创建解析器
+// GetParser 根据name创建解析器
 func GetParser(name, topTag string) TitleParser {
 	creator, ok := parserCreators[name]
 	if !ok {

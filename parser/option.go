@@ -1,9 +1,9 @@
 package parser
 
-// 对URL进行编码的函数，传入URL，传出编码后的结果
+// ContentEncoder 对URL进行编码的函数，传入URL，传出编码后的结果
 type ContentEncoder func(string) string
 
-// 用于向parseMarkdown的参数传递
+// ParseOption 用于向parseMarkdown的参数传递
 type ParseOption struct {
 	// 开始解析的标题层次
 	TopTag string

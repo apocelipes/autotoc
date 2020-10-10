@@ -14,8 +14,11 @@ type markdownTitleParser struct {
 	reg    *regexp.Regexp
 }
 
+// MarkdownTitleParserName name of MarkdownTitleParser for the parser factory
+const MarkdownTitleParserName = "md"
+
 func init() {
-	SetParser("md", newMarkdownTitleParser)
+	SetParser(MarkdownTitleParserName, newMarkdownTitleParser)
 }
 
 var (
@@ -70,13 +73,13 @@ func (m *markdownTitleParser) parseTitle(line string) *TitleNode {
 	content := m.reg.FindStringSubmatch(line)[2]
 
 	// markdown的锚标签为经过处理后的content
-	id := m.filterId(content)
+	id := m.filterID(content)
 
 	return NewTitleNode(tagName, id, content)
 }
 
 // 将id过滤为符合gfm的格式
-func (m *markdownTitleParser) filterId(id string) string {
+func (m *markdownTitleParser) filterID(id string) string {
 	// gfm下无法显示html tag的效果，并且tag会导致id的值不可预测，所以不支持解析
 	if htmlTagMatcher.MatchString(id) {
 		panic("not support html tags in a markdown style title")

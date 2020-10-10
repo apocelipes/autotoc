@@ -136,7 +136,7 @@ func main() {
 	case "html":
 		html := strings.Builder{}
 		for _, v := range ret {
-			html.WriteString(v.Html())
+			html.WriteString(v.HTML())
 		}
 		data = format.RenderCatalog(*catalogID, *catalogTitle, html.String())
 

@@ -11,8 +11,8 @@ const catalogTemplate = `<blockquote id="%s">
 </blockquote>
 `
 
-// 将生成的目录嵌入catalog模板
+// RenderCatalog 将生成的目录嵌入catalog模板
 // TODO 自定义模板
-func RenderCatalog(catalogId, catalogTitle, catalogContent string) string {
-	return fmt.Sprintf(catalogTemplate, catalogId, catalogTitle, catalogContent)
+func RenderCatalog(catalogID, catalogTitle, catalogContent string) string {
+	return fmt.Sprintf(catalogTemplate, catalogID, catalogTitle, catalogContent)
 }

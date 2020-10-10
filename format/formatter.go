@@ -1,13 +1,13 @@
 package format
 
 // 返回格式化后的html
-type FormatFunc func(data, indent string) string
+type FormatterFunc func(data, indent string) string
 
 var (
-	formatters = make(map[string]FormatFunc)
+	formatters = make(map[string]FormatterFunc)
 )
 
-func SetFormatter(name string, formatter FormatFunc) {
+func SetFormatter(name string, formatter FormatterFunc) {
 	if name == "" || formatter == nil {
 		panic("name or formatter should not be empty")
 	}
@@ -15,7 +15,7 @@ func SetFormatter(name string, formatter FormatFunc) {
 	formatters[name] = formatter
 }
 
-func NewFormatter(name string) FormatFunc {
+func NewFormatter(name string) FormatterFunc {
 	formatter, ok := formatters[name]
 	if !ok {
 		return nil

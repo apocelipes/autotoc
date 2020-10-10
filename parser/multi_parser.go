@@ -5,8 +5,10 @@ type multiParser struct {
 	parsers []TitleParser
 }
 
+const MultiParserName = "multi"
+
 func init() {
-	SetParser("multi", newMultiParser)
+	SetParser(MultiParserName, newMultiParser)
 }
 
 func newMultiParser(topTag string) TitleParser {
@@ -16,7 +18,7 @@ func newMultiParser(topTag string) TitleParser {
 
 	// 创建所有注册过的解析器
 	for name := range parserCreators {
-		if name == "multi" {
+		if name == MultiParserName {
 			continue
 		}
 		p.parsers = append(p.parsers, GetParser(name, topTag))

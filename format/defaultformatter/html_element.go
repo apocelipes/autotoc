@@ -1,4 +1,4 @@
-package defaultFormatter
+package defaultformatter
 
 import (
 	"strings"
@@ -14,7 +14,7 @@ type HtmlElement struct {
 	Children   []*HtmlElement
 }
 
-// 根据startTagToken生成html node
+// NewHtmlElement 根据startTagToken生成html node
 func NewHtmlElement(start *html.Token) *HtmlElement {
 	return &HtmlElement{
 		StartToken: start,
@@ -31,7 +31,7 @@ func (element *HtmlElement) AddChild(child *HtmlElement) {
 	element.Children = append(element.Children, child)
 }
 
-// 将节点树转换成格式化后的字符串
+// ToString 将节点树转换成格式化后的字符串
 // 只对children的string进行缩进
 // 当前节点的缩进应该由上层节点处理
 // depth是当前节点的嵌套深度，如果不需要换行则不会增加，从0开始

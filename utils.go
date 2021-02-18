@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"flag"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -53,9 +52,12 @@ func concatCatalog(hasToc bool, catalog, tocMark, fileData string) string {
 }
 
 func combine2File(file *os.File, catalog, tocMark string) (string, error) {
-	file.Seek(0, 0)
+	_, err := file.Seek(0, 0)
+	if err != nil {
+		return "", err
+	}
 	hasToc := hasTocMark(file, tocMark)
-	data, err := ioutil.ReadAll(file)
+	data, err := io.ReadAll(file)
 	if err != nil {
 		return "", err
 	}
@@ -86,12 +88,18 @@ func WriteBackFile(catalog, tocMark string, file *os.File) error {
 		return err
 	}
 
-	file.Seek(0, 0)
+	_, err = file.Seek(0, 0)
+	if err != nil {
+		return err
+	}
 	_, err = io.Copy(backup, file)
 	if err != nil {
 		return err
 	}
-	backup.Close()
+	err = backup.Close()
+	if err != nil {
+		return err
+	}
 
 	fullData, err := combine2File(file, catalog, tocMark)
 	if err != nil {
@@ -99,7 +107,10 @@ func WriteBackFile(catalog, tocMark string, file *os.File) error {
 	}
 
 	err = file.Truncate(0)
-	file.Seek(0, 0)
+	if err != nil {
+		return err
+	}
+	_, err = file.Seek(0, 0)
 	if err != nil {
 		return err
 	}

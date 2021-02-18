@@ -23,8 +23,7 @@ func init() {
 
 func newHTMLTitleParser(topTag string) TitleParser {
 	parser := &htmlTitleParser{topTag: topTag}
-	parser.reg = parser.getRegexp()
-	if parser.reg == nil {
+	if parser.reg = parser.getRegexp(); parser.reg == nil {
 		return nil
 	}
 

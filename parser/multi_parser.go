@@ -29,8 +29,7 @@ func newMultiParser(topTag string) TitleParser {
 
 func (m *multiParser) Parse(content string) *TitleNode {
 	for _, p := range m.parsers {
-		node := p.Parse(content)
-		if node != nil {
+		if node := p.Parse(content); node != nil {
 			return node
 		}
 	}

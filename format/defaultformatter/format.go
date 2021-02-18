@@ -39,8 +39,7 @@ func parseHtml(t *html.Tokenizer, ret *HtmlElement, stack *parser.ParentStack) e
 			}
 			stack.Push(el)
 
-			err := parseHtml(t, ret, stack)
-			if err != nil {
+			if err := parseHtml(t, ret, stack); err != nil {
 				return err
 			}
 		case html.EndTagToken:
@@ -68,8 +67,7 @@ func FormatHtml(data, indent string) (string, error) {
 	t := html.NewTokenizer(strings.NewReader(data))
 	ret := NewHtmlElement(nil)
 	stack := parser.NewParentStack()
-	err := parseHtml(t, ret, stack)
-	if err != nil && err != io.EOF {
+	if err := parseHtml(t, ret, stack); err != nil && err != io.EOF {
 		return "", err
 	}
 

@@ -15,7 +15,7 @@ import (
 
 func main() {
 	flag.Usage = func() {
-		fmt.Fprintln(flag.CommandLine.Output(), usage)
+		_, _ = fmt.Fprintln(flag.CommandLine.Output(), usage)
 		os.Exit(1)
 	}
 
@@ -71,22 +71,22 @@ func main() {
 
 	flag.Parse()
 
-	var err error
 	var f *os.File
 	if len(flag.Args()) == 0 {
 		// 未提供文件名参数时判断是否处于pipe中，是则stdin为输入文件
 		if terminal.IsTerminal(int(os.Stdin.Fd())) {
-			fmt.Fprint(os.Stderr, "错误：需要一个输入文件。\n")
+			_, _ = fmt.Fprint(os.Stderr, "错误：需要一个输入文件。\n")
 			flag.Usage()
 		}
 
 		if *writeBack {
-			fmt.Fprintln(os.Stderr, "-w不能在输入为stdin时使用")
+			_, _ = fmt.Fprintln(os.Stderr, "-w不能在输入为stdin时使用")
 			os.Exit(1)
 		}
 
 		f = os.Stdin
 	} else {
+		var err error
 		if !*writeBack {
 			f, err = os.Open(flag.Arg(0))
 		} else {
@@ -114,7 +114,7 @@ func main() {
 		titleFilter.SetExcludeTitles(*excludeTitle)
 		if *excludeFilter != "" {
 			if err := titleFilter.SetExcludeRegExp(*excludeFilter); err != nil {
-				fmt.Fprintln(os.Stderr, "parse exclude-filter error: "+err.Error())
+				_, _ = fmt.Fprintln(os.Stderr, "parse exclude-filter error: "+err.Error())
 				os.Exit(1)
 			}
 		}
@@ -127,7 +127,7 @@ func main() {
 
 	ret := parser.ParseMarkdown(f, &option)
 	if len(ret) == 0 {
-		fmt.Fprintln(os.Stderr, "未找到任何标题。")
+		_, _ = fmt.Fprintln(os.Stderr, "未找到任何标题。")
 		os.Exit(1)
 	}
 
@@ -154,8 +154,7 @@ func main() {
 	}
 
 	if *writeBack || *fullOutput {
-		err = WriteCatalog(f, data, *tocMark, *fullOutput)
-		if err != nil {
+		if err := WriteCatalog(f, data, *tocMark, *fullOutput); err != nil {
 			panic(err)
 		}
 

@@ -32,8 +32,7 @@ var (
 
 func newMarkdownTitleParser(topTag string) TitleParser {
 	parser := &markdownTitleParser{topTag: topTag}
-	parser.reg = parser.getRegexp()
-	if parser.reg == nil {
+	if parser.reg = parser.getRegexp(); parser.reg == nil {
 		return nil
 	}
 
@@ -98,11 +97,11 @@ func (m *markdownTitleParser) filterID(id string) string {
 	// 如果开头或结尾的非空字符串全部为下划线则不进行第二次删除
 	leftNonEmpty := findLeftNonEmptyStr(words)
 	rightNonEmpty := findRightNonEmptyStr(words)
-	if leftNonEmpty != -1 && rightNonEmpty != -1 {
-		if allUnderlineMatcher.MatchString(words[leftNonEmpty]) ||
-			allUnderlineMatcher.MatchString(words[rightNonEmpty]) {
-			return id
-		}
+	if leftNonEmpty != -1 &&
+		rightNonEmpty != -1 &&
+		(allUnderlineMatcher.MatchString(words[leftNonEmpty]) ||
+			allUnderlineMatcher.MatchString(words[rightNonEmpty])) {
+		return id
 	}
 
 	return removeEnclosedWordUnderline(id)

@@ -30,8 +30,7 @@ func hasTocMark(file *os.File, tocMark string) bool {
 	scanner := bufio.NewScanner(file)
 	defer file.Seek(0, 0)
 	for scanner.Scan() {
-		line := scanner.Text()
-		if line == tocMark {
+		if line := scanner.Text(); line == tocMark {
 			return true
 		}
 	}
@@ -52,8 +51,7 @@ func concatCatalog(hasToc bool, catalog, tocMark, fileData string) string {
 }
 
 func combine2File(file *os.File, catalog, tocMark string) (string, error) {
-	_, err := file.Seek(0, 0)
-	if err != nil {
+	if _, err := file.Seek(0, 0); err != nil {
 		return "", err
 	}
 	hasToc := hasTocMark(file, tocMark)
@@ -88,16 +86,15 @@ func WriteBackFile(catalog, tocMark string, file *os.File) error {
 		return err
 	}
 
-	_, err = file.Seek(0, 0)
-	if err != nil {
+	if _, err := file.Seek(0, 0); err != nil {
 		return err
 	}
-	_, err = io.Copy(backup, file)
-	if err != nil {
+
+	if _, err := io.Copy(backup, file); err != nil {
 		return err
 	}
-	err = backup.Close()
-	if err != nil {
+
+	if err := backup.Close(); err != nil {
 		return err
 	}
 
@@ -106,22 +103,20 @@ func WriteBackFile(catalog, tocMark string, file *os.File) error {
 		return err
 	}
 
-	err = file.Truncate(0)
-	if err != nil {
+	if err := file.Truncate(0); err != nil {
 		return err
 	}
-	_, err = file.Seek(0, 0)
-	if err != nil {
+
+	if _, err := file.Seek(0, 0); err != nil {
 		return err
 	}
-	_, err = file.WriteString(fullData)
-	if err != nil {
+
+	if _, err := file.WriteString(fullData); err != nil {
 		return err
 	}
 
 	// 成功写回，删除备份
-	err = os.Remove(backupName)
-	if err != nil {
+	if err := os.Remove(backupName); err != nil {
 		return err
 	}
 

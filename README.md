@@ -1,5 +1,5 @@
 # autotoc
-autoc是一个帮助你为markdown文档生成目录的自动化工具。
+autotoc是一个帮助你为markdown文档生成目录的自动化工具。
 
 autotoc遵守gfm格式规范，可用于为支持gfm格式markdown的站点的内容作者为自己的文档生成易于读者阅读和跳转的文档内容目录，将你从繁重的重复劳动中解放出来。
 

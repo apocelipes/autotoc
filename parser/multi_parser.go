@@ -8,7 +8,7 @@ type multiParser struct {
 const MultiParserName = "multi"
 
 func init() {
-	SetParser(MultiParserName, newMultiParser)
+	SetInnerParser(MultiParserName, newMultiParser)
 }
 
 func newMultiParser(topTag string) TitleParser {
@@ -21,7 +21,7 @@ func newMultiParser(topTag string) TitleParser {
 		if name == MultiParserName {
 			continue
 		}
-		p.parsers = append(p.parsers, GetParser(name, topTag))
+		p.parsers = append(p.parsers, parserCreators[name](topTag))
 	}
 
 	return p

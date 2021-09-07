@@ -147,9 +147,10 @@ $ head -n 10 example.md
 注意，autotoc在生成目录到章节对应的链接时会将除了unicode字母和数字之外的其他字符去除。这一做法在不支持gfm格式或是对gfm兼容性较弱的地方可能导致目录无法跳转或其他问题。
 
 ## TODO
-- 支持完整的gfm语法
-- 补充parser的单元测试
-- 自定义包裹目录信息的模板
-- 添加verbose模式
+- [ ] 支持完整的gfm语法
+- [ ] 补充parser的单元测试
+- [ ] 自定义包裹目录信息的模板
+- [ ] 添加verbose模式
+- [ ] 简化exclude dir处理逻辑
 
 欢迎提交issue或PR！

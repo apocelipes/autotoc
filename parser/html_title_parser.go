@@ -18,7 +18,7 @@ type htmlTitleParser struct {
 const HTMLTitleParserName = "html"
 
 func init() {
-	SetParser(HTMLTitleParserName, newHTMLTitleParser)
+	SetInnerParser(HTMLTitleParserName, newHTMLTitleParser)
 }
 
 func newHTMLTitleParser(topTag string) TitleParser {

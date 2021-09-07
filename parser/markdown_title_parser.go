@@ -18,7 +18,7 @@ type markdownTitleParser struct {
 const MarkdownTitleParserName = "md"
 
 func init() {
-	SetParser(MarkdownTitleParserName, newMarkdownTitleParser)
+	SetInnerParser(MarkdownTitleParserName, newMarkdownTitleParser)
 }
 
 var (

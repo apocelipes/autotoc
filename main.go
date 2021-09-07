@@ -7,10 +7,9 @@ import (
 	"os"
 	"strings"
 
-	"golang.org/x/crypto/ssh/terminal"
-
 	"github.com/apocelipes/autotoc/format"
 	"github.com/apocelipes/autotoc/parser"
+	"golang.org/x/term"
 )
 
 func main() {
@@ -74,7 +73,7 @@ func main() {
 	var f *os.File
 	if len(flag.Args()) == 0 {
 		// 未提供文件名参数时判断是否处于pipe中，是则stdin为输入文件
-		if terminal.IsTerminal(int(os.Stdin.Fd())) {
+		if term.IsTerminal(int(os.Stdin.Fd())) {
 			_, _ = fmt.Fprint(os.Stderr, "错误：需要一个输入文件。\n")
 			flag.Usage()
 		}
@@ -103,13 +102,9 @@ func main() {
 		*catalogIndent = "\t"
 	}
 
-	option := parser.ParseOption{
-		TopTag:   *topTag,
-		ScanType: *catalogScanType,
-		TocMark:  *tocMark,
-	}
+	options := []parser.Option{parser.TopTag(*topTag), parser.ScanType(*catalogScanType), parser.TOCMark(*tocMark)}
 
-	if !*noExclude {
+	if !*noExclude { //TODO: 简化逻辑
 		titleFilter := &parser.DefaultFilter{}
 		titleFilter.SetExcludeTitles(*excludeTitle)
 		if *excludeFilter != "" {
@@ -118,14 +113,15 @@ func main() {
 				os.Exit(1)
 			}
 		}
-		option.Filter = titleFilter
+		options = append(options, parser.Filter(titleFilter))
 	}
 
 	if !*noEncode {
-		option.Encoder = url.PathEscape
+		options = append(options, parser.URLEncoder(url.PathEscape))
 	}
 
-	ret := parser.ParseMarkdown(f, &option)
+	mdParser := parser.GetParser(options...)
+	ret := mdParser.Parse(f)
 	if len(ret) == 0 {
 		_, _ = fmt.Fprintln(os.Stderr, "未找到任何标题。")
 		os.Exit(1)

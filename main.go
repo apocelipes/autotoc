@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"net/url"
 	"os"
 	"strings"
@@ -12,12 +13,13 @@ import (
 	"golang.org/x/term"
 )
 
-func main() {
-	flag.Usage = func() {
-		_, _ = fmt.Fprintln(flag.CommandLine.Output(), usage)
-		os.Exit(1)
+func checker(err error) {
+	if err != nil {
+		log.Fatalln(err)
 	}
+}
 
+func main() {
 	topTag := StringFlagWithShortName("top-tag",
 		"t",
 		topTagDefault,
@@ -74,26 +76,23 @@ func main() {
 	if len(flag.Args()) == 0 {
 		// 未提供文件名参数时判断是否处于pipe中，是则stdin为输入文件
 		if term.IsTerminal(int(os.Stdin.Fd())) {
-			_, _ = fmt.Fprint(os.Stderr, "错误：需要一个输入文件。\n")
+			_, _ = fmt.Fprintln(os.Stderr, "错误：需要一个输入文件")
 			flag.Usage()
 		}
 
 		if *writeBack {
-			_, _ = fmt.Fprintln(os.Stderr, "-w不能在输入为stdin时使用")
-			os.Exit(1)
+			log.Fatalln("-w不能在输入为stdin时使用")
 		}
 
 		f = os.Stdin
 	} else {
+		openFlag := os.O_RDONLY
+		if *writeBack {
+			openFlag = os.O_RDWR
+		}
 		var err error
-		if !*writeBack {
-			f, err = os.Open(flag.Arg(0))
-		} else {
-			f, err = os.OpenFile(flag.Arg(0), os.O_RDWR, 0644)
-		}
-		if err != nil {
-			panic(err)
-		}
+		f, err = os.OpenFile(flag.Arg(0), openFlag, 0)
+		checker(err)
 		defer f.Close()
 	}
 
@@ -102,29 +101,27 @@ func main() {
 		*catalogIndent = "\t"
 	}
 
-	options := []parser.Option{parser.TopTag(*topTag), parser.ScanType(*catalogScanType), parser.TOCMark(*tocMark)}
+	options := []parser.Option{
+		parser.WithTopTag(*topTag),
+		parser.WithScanType(*catalogScanType),
+		parser.WithTOCMark(*tocMark),
+	}
 
-	if !*noExclude { //TODO: 简化逻辑
+	if !*noExclude {
 		titleFilter := &parser.DefaultFilter{}
 		titleFilter.SetExcludeTitles(*excludeTitle)
-		if *excludeFilter != "" {
-			if err := titleFilter.SetExcludeRegExp(*excludeFilter); err != nil {
-				_, _ = fmt.Fprintln(os.Stderr, "parse exclude-filter error: "+err.Error())
-				os.Exit(1)
-			}
-		}
-		options = append(options, parser.Filter(titleFilter))
+		checker(titleFilter.SetExcludeRegExp(*excludeFilter))
+		options = append(options, parser.WithFilter(titleFilter))
 	}
 
 	if !*noEncode {
-		options = append(options, parser.URLEncoder(url.PathEscape))
+		options = append(options, parser.WithURLEncoder(url.PathEscape))
 	}
 
 	mdParser := parser.GetParser(options...)
 	ret := mdParser.Parse(f)
 	if len(ret) == 0 {
-		_, _ = fmt.Fprintln(os.Stderr, "未找到任何标题。")
-		os.Exit(1)
+		log.Fatalln("未找到任何标题")
 	}
 
 	var data string
@@ -147,13 +144,12 @@ func main() {
 		}
 
 		data = md.String()
+		//default:
+		//	log.Fatalf("unknow format: %v\n", catalogOutputType)
 	}
 
 	if *writeBack || *fullOutput {
-		if err := WriteCatalog(f, data, *tocMark, *fullOutput); err != nil {
-			panic(err)
-		}
-
+		checker(WriteCatalog(f, data, *tocMark, *fullOutput))
 		return
 	}
 

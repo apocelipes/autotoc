@@ -1,9 +1,17 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 )
+
+func init() {
+	flag.Usage = func() {
+		_, _ = fmt.Fprintln(flag.CommandLine.Output(), usage)
+		os.Exit(1)
+	}
+}
 
 // 参数选项说明
 const (

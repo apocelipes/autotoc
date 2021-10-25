@@ -73,36 +73,36 @@ func GetParser(options ...Option) *Parser {
 
 type Option func(*Parser)
 
-// TopTag 设置开始解析的标题层级，值为h1-h5
-func TopTag(tag string) Option {
+// WithTopTag 设置开始解析的标题层级，值为h1-h5
+func WithTopTag(tag string) Option {
 	return func(p *Parser) {
 		p.topTag = tag
 	}
 }
 
-// ScanType 设置需要解析的标题类型（html, markdown）
-func ScanType(t string) Option {
+// WithScanType 设置需要解析的标题类型（html, markdown）
+func WithScanType(t string) Option {
 	return func(p *Parser) {
 		p.scanType = t
 	}
 }
 
 // TocMark 设置文档中的toc标记
-func TOCMark(mark string) Option {
+func WithTOCMark(mark string) Option {
 	return func(p *Parser) {
 		p.tocMark = mark
 	}
 }
 
-// Filter 根据标题内容确定是否需要被解析
-func Filter(filter TitleFilter) Option {
+// WithFilter 根据标题内容确定是否需要被解析
+func WithFilter(filter TitleFilter) Option {
 	return func(p *Parser) {
 		p.filter = filter
 	}
 }
 
-// URLEncoder 设置标题内容的编码器，非ascii字符作为URL时可能需要编码
-func URLEncoder(encoder ContentEncoder) Option {
+// WithURLEncoder 设置标题内容的编码器，非ascii字符作为URL时可能需要编码
+func WithURLEncoder(encoder ContentEncoder) Option {
 	return func(p *Parser) {
 		p.encoder = encoder
 	}

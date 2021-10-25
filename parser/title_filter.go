@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 )
@@ -27,9 +28,13 @@ func (filter *DefaultFilter) SetExcludeTitles(titles string) {
 }
 
 func (filter *DefaultFilter) SetExcludeRegExp(reg string) (err error) {
+	if reg == "" {
+		return
+	}
+
 	filter.ExcludeRegExp, err = regexp.Compile(reg)
 	if err != nil {
-		return
+		return fmt.Errorf("parse exclude-filter error: %v", err)
 	}
 
 	return
@@ -38,10 +43,6 @@ func (filter *DefaultFilter) SetExcludeRegExp(reg string) (err error) {
 // FilterTitleContent 根据title的内容过滤标题
 // 返回true表示title需要被过滤
 func (filter *DefaultFilter) FilterTitleContent(content string) bool {
-	if filter.ExcludeTitles == nil {
-		return false
-	}
-
 	for i := range filter.ExcludeTitles {
 		if content == filter.ExcludeTitles[i] {
 			return true

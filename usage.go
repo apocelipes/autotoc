@@ -31,20 +31,6 @@ const (
 	noEncodeUsage          = "禁止将标题按URL格式进行编码"
 )
 
-// 字符串参数的默认值
-const (
-	topTagDefault            = "h2"
-	formatterDefault         = "default"
-	catalogIDDefault         = "bookmark"
-	catalogTitleDefault      = "本文索引"
-	catalogOutputTypeDefault = "html"
-	catalogScanTypeDefault   = "multi"
-	catalogIndentDefault     = "  " // 2 space
-	tocMarkDefault           = "[TOC]"
-	excludeTitleDefault      = "参考"
-	excludeFilterDefault     = ""
-)
-
 var usage = fmt.Sprintf(`Usage: %s [option]... <file>
 
 读入file，根据其内容生成目录结构。
@@ -91,4 +77,5 @@ var usage = fmt.Sprintf(`Usage: %s [option]... <file>
 	writeBackUsage,
 	fullOutputUsage,
 	noExcludeUsage,
-	noEncodeUsage)
+	noEncodeUsage,
+)

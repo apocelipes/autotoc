@@ -13,7 +13,7 @@ import (
 // ret是函数的结果集
 // stack记录解析时父节点的变化
 // 正常解析完成返回io.EOF
-func parseHtml(t *html.Tokenizer, ret *HtmlElement, stack *parser.ParentStack) error {
+func parseHtml(t *html.Tokenizer, ret *HtmlElement, stack *parser.ParentStack[*HtmlElement]) error {
 	for {
 		tt := t.Next()
 		if tt == html.ErrorToken {
@@ -28,7 +28,7 @@ func parseHtml(t *html.Tokenizer, ret *HtmlElement, stack *parser.ParentStack) e
 			}
 		}
 
-		parent, _ := stack.Top().(*HtmlElement)
+		parent, _ := stack.Top()
 		switch tk.Type {
 		case html.StartTagToken:
 			el := NewHtmlElement(&tk)
@@ -66,7 +66,7 @@ func parseHtml(t *html.Tokenizer, ret *HtmlElement, stack *parser.ParentStack) e
 func FormatHtml(data, indent string) (string, error) {
 	t := html.NewTokenizer(strings.NewReader(data))
 	ret := NewHtmlElement(nil)
-	stack := parser.NewParentStack()
+	stack := parser.NewParentStack[*HtmlElement]()
 	if err := parseHtml(t, ret, stack); err != nil && err != io.EOF {
 		return "", err
 	}

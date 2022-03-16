@@ -1,24 +1,24 @@
 package parser
 
 // ParentStack 用于解析html时缓存
-type ParentStack struct {
-	parents []interface{}
+type ParentStack[T any] struct {
+	parents []T
 }
 
 const defaultCacheSize = 10
 
 // NewParentStack 返回ParentStack，设置第一个元素为nil，用作扫描的初始化状态
-func NewParentStack() *ParentStack {
-	return &ParentStack{
-		parents: make([]interface{}, 0, defaultCacheSize),
+func NewParentStack[T any]() *ParentStack[T] {
+	return &ParentStack[T]{
+		parents: make([]T, 0, defaultCacheSize),
 	}
 }
 
-func (s *ParentStack) Push(e interface{}) {
+func (s *ParentStack[T]) Push(e T) {
 	s.parents = append(s.parents, e)
 }
 
-func (s *ParentStack) Pop() {
+func (s *ParentStack[T]) Pop() {
 	if len(s.parents) == 0 {
 		return
 	}
@@ -26,18 +26,19 @@ func (s *ParentStack) Pop() {
 	s.parents = s.parents[:len(s.parents)-1]
 }
 
-func (s *ParentStack) Top() interface{} {
+func (s *ParentStack[T]) Top() (T, bool) {
 	if len(s.parents) == 0 {
-		return nil
+		var t T
+		return t, false
 	}
 
-	return s.parents[len(s.parents)-1]
+	return s.parents[len(s.parents)-1], true
 }
 
-func (s *ParentStack) Clear() {
+func (s *ParentStack[T]) Clear() {
 	if len(s.parents) == 0 {
 		return
 	}
 
-	s.parents = make([]interface{}, 0, defaultCacheSize)
+	s.parents = make([]T, 0, defaultCacheSize)
 }

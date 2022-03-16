@@ -130,7 +130,7 @@ func (p *Parser) Parse(file io.Reader) []*TitleNode {
 	scanner := bufio.NewScanner(file)
 	ret := make([]*TitleNode, 0)
 
-	parents := NewParentStack()
+	parents := NewParentStack[*TitleNode]()
 	for scanner.Scan() {
 		line := scanner.Text()
 		// 如果遇到tocMark就重新构建节点树
@@ -147,12 +147,12 @@ func (p *Parser) Parse(file io.Reader) []*TitleNode {
 
 		node.id = p.encode(node.id)
 
-		parent, _ := parents.Top().(*TitleNode)
+		parent, _ := parents.Top()
 
 		// 找到自己的父节点，排除所有同级或下级标题
 		for parent != nil && !parent.IsChildNode(node) {
 			parents.Pop()
-			parent, _ = parents.Top().(*TitleNode)
+			parent, _ = parents.Top()
 		}
 
 		// 因为不知道是否存在子节点，所以都当做拥有子节点并入栈

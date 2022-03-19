@@ -20,11 +20,7 @@ type DefaultFilter struct {
 
 // SetExcludeTitles 将由逗号分隔的一串标题分割成slice并设置
 func (filter *DefaultFilter) SetExcludeTitles(titles string) {
-	t := strings.Split(titles, ",")
-	filter.ExcludeTitles = make([]string, 0, len(t))
-	for i := range t {
-		filter.ExcludeTitles = append(filter.ExcludeTitles, t[i])
-	}
+	filter.ExcludeTitles = strings.Split(titles, ",")
 }
 
 func (filter *DefaultFilter) SetExcludeRegExp(reg string) (err error) {

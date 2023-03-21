@@ -103,6 +103,7 @@ func WriteBackFile(catalog, tocMark string, file *os.File) error {
 		return err
 	}
 
+	// todo this truncating maybe useless
 	if err := file.Truncate(0); err != nil {
 		return err
 	}

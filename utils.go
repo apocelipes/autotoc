@@ -27,8 +27,8 @@ func WriteCatalog(source *os.File, catalog, tocMark string, outputStdout bool) e
 }
 
 func hasTocMark(file *os.File, tocMark string) bool {
+	// can change file's read/write offset
 	scanner := bufio.NewScanner(file)
-	defer file.Seek(0, 0)
 	for scanner.Scan() {
 		if line := scanner.Text(); line == tocMark {
 			return true
@@ -55,6 +55,9 @@ func combine2File(file *os.File, catalog, tocMark string) (string, error) {
 		return "", err
 	}
 	hasToc := hasTocMark(file, tocMark)
+	if _, err := file.Seek(0, io.SeekStart); err != nil {
+		return "", err
+	}
 	data, err := io.ReadAll(file)
 	if err != nil {
 		return "", err
@@ -103,7 +106,6 @@ func WriteBackFile(catalog, tocMark string, file *os.File) error {
 		return err
 	}
 
-	// todo this truncating maybe useless
 	if err := file.Truncate(0); err != nil {
 		return err
 	}

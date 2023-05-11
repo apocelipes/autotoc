@@ -7,6 +7,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/mattn/go-isatty"
 )
 
 // StringFlagWithShortName 返回一个绑定了长参数名和短参数名的flag处理器
@@ -124,4 +126,10 @@ func WriteBackFile(catalog, tocMark string, file *os.File) error {
 	}
 
 	return nil
+}
+
+// IsStdinTerminal returns true when the os.Stdin is a terminal (including cygwin/msys2 terminals)
+func IsStdinTerminal() bool {
+	fd := uintptr(os.Stdin.Fd())
+	return isatty.IsTerminal(fd) || isatty.IsCygwinTerminal(fd)
 }

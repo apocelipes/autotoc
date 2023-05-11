@@ -10,7 +10,6 @@ import (
 
 	"github.com/apocelipes/autotoc/format"
 	"github.com/apocelipes/autotoc/parser"
-	"golang.org/x/term"
 )
 
 func checker(err error) {
@@ -74,8 +73,8 @@ func main() {
 
 	var f *os.File
 	if len(flag.Args()) == 0 {
-		// 未提供文件名参数时判断是否处于pipe中，是则stdin为输入文件
-		if term.IsTerminal(int(os.Stdin.Fd())) {
+		// 未提供文件名参数时判断是否处于pipe中，是则stdin为输入文件，不可能为terminal
+		if IsStdinTerminal() {
 			_, _ = fmt.Fprintln(os.Stderr, "错误：需要一个输入文件")
 			flag.Usage()
 		}

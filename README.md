@@ -5,8 +5,8 @@ autotoc遵守gfm格式规范，可用于为支持gfm格式markdown的站点的�
 
 ## Installation
 ```bash
-# 需要go1.16，并保证你的$GOPATH/bin在$PATH中
-# go 1.16目前默认会将程序安装至$GOPATH/bin
+# 需要go1.20+，并保证你的$GOPATH/bin在$PATH中
+# go 1.20目前默认会将程序安装至$GOPATH/bin
 export PATH=$PATH:$GOPATH/bin
 go install github.com/apocelipes/autotoc@latest
 ```

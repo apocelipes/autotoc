@@ -1,9 +1,9 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
-	"log"
 	"net/url"
 	"os"
 	"strings"
@@ -11,12 +11,6 @@ import (
 	"github.com/apocelipes/autotoc/format"
 	"github.com/apocelipes/autotoc/parser"
 )
-
-func checker(err error) {
-	if err != nil {
-		log.Fatalln(err)
-	}
-}
 
 func main() {
 	topTag := StringFlagWithShortName("top-tag",
@@ -80,7 +74,7 @@ func main() {
 		}
 
 		if *writeBack {
-			log.Fatalln("-w不能在输入为stdin时使用")
+			checkError(errors.New("-w不能在输入为stdin时使用"))
 		}
 
 		f = os.Stdin
@@ -91,7 +85,7 @@ func main() {
 		}
 		var err error
 		f, err = os.OpenFile(flag.Arg(0), openFlag, 0)
-		checker(err)
+		checkError(err)
 		defer f.Close()
 	}
 
@@ -109,7 +103,7 @@ func main() {
 	if !*noExclude {
 		titleFilter := &parser.DefaultFilter{}
 		titleFilter.SetExcludeTitles(*excludeTitle)
-		checker(titleFilter.SetExcludeRegExp(*excludeFilter))
+		checkError(titleFilter.SetExcludeRegExp(*excludeFilter))
 		options = append(options, parser.WithFilter(titleFilter))
 	}
 
@@ -120,37 +114,45 @@ func main() {
 	mdParser := parser.GetParser(options...)
 	ret := mdParser.Parse(f)
 	if len(ret) == 0 {
-		log.Fatalln("未找到任何标题")
+		checkError(errors.New("未找到任何标题"))
 	}
 
 	var data string
 	switch *catalogOutputType {
 	case "html":
-		html := strings.Builder{}
-		for _, v := range ret {
-			html.WriteString(v.HTML())
-		}
-		data = format.RenderCatalog(*catalogID, *catalogTitle, html.String())
-
-		formatHTMLFunc := format.NewFormatter(*formatter)
-		data = formatHTMLFunc(data, *catalogIndent)
+		data = renderHTMLTitles(*catalogID, *catalogTitle, *catalogIndent, *formatter, ret)
 	case "md":
-		md := strings.Builder{}
-		md.WriteString("#### " + *catalogTitle + "\n\n")
-		for _, v := range ret {
-			// each parent has no indent
-			md.WriteString(v.Markdown(*catalogIndent, 0))
-		}
-
-		data = md.String()
-		//default:
-		//	log.Fatalf("unknow format: %v\n", catalogOutputType)
+		data = renderMarkdownTitles(*catalogTitle, *catalogIndent, ret)
+	default:
+		checkError(fmt.Errorf("不支持的格式化类型: %v", *catalogOutputType))
 	}
 
 	if *writeBack || *fullOutput {
-		checker(WriteCatalog(f, data, *tocMark, *fullOutput))
+		checkError(WriteCatalog(f, data, *tocMark, *fullOutput))
 		return
 	}
 
 	fmt.Println(data)
+}
+
+func renderHTMLTitles(catalogID, catalogTitle, catalogIndent, formatter string, titles []*parser.TitleNode) string {
+	html := strings.Builder{}
+	for _, v := range titles {
+		html.WriteString(v.HTML())
+	}
+	data := format.RenderCatalog(catalogID, catalogTitle, html.String())
+
+	formatHTMLFunc := format.NewFormatter(formatter)
+	return formatHTMLFunc(data, catalogIndent)
+}
+
+func renderMarkdownTitles(catalogTitle, catalogIndent string, titles []*parser.TitleNode) string {
+	md := strings.Builder{}
+	md.WriteString("#### " + catalogTitle + "\n\n")
+	for _, v := range titles {
+		// each parent has no indent
+		md.WriteString(v.Markdown(catalogIndent, 0))
+	}
+
+	return md.String()
 }

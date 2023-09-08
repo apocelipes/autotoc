@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"flag"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -132,4 +133,11 @@ func WriteBackFile(catalog, tocMark string, file *os.File) error {
 func IsStdinTerminal() bool {
 	fd := uintptr(os.Stdin.Fd())
 	return isatty.IsTerminal(fd) || isatty.IsCygwinTerminal(fd)
+}
+
+func checkError(err error) {
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
 }

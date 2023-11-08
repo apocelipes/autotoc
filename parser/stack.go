@@ -36,9 +36,5 @@ func (s *ParentStack[T]) Top() (T, bool) {
 }
 
 func (s *ParentStack[T]) Clear() {
-	if len(s.parents) == 0 {
-		return
-	}
-
 	s.parents = make([]T, 0, defaultCacheSize)
 }

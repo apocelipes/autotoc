@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+
+	"github.com/apocelipes/autotoc/internal/stack"
 )
 
 // ContentEncoder 对URL进行编码的函数，传入URL，传出编码后的结果
@@ -130,7 +132,7 @@ func (p *Parser) Parse(file io.Reader) []*TitleNode {
 	scanner := bufio.NewScanner(file)
 	ret := make([]*TitleNode, 0)
 
-	parents := NewParentStack[*TitleNode]()
+	parents := stack.NewNodeStack[*TitleNode]()
 	for scanner.Scan() {
 		line := scanner.Text()
 		// 如果遇到tocMark就重新构建节点树

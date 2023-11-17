@@ -4,7 +4,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/apocelipes/autotoc/parser"
+	"github.com/apocelipes/autotoc/internal/stack"
 
 	"golang.org/x/net/html"
 )
@@ -13,7 +13,7 @@ import (
 // ret是函数的结果集
 // stack记录解析时父节点的变化
 // 正常解析完成返回io.EOF
-func parseHtml(t *html.Tokenizer, ret *HtmlElement, stack *parser.ParentStack[*HtmlElement]) error {
+func parseHtml(t *html.Tokenizer, ret *HtmlElement, stack *stack.NodeStack[*HtmlElement]) error {
 	for {
 		tt := t.Next()
 		if tt == html.ErrorToken {
@@ -66,7 +66,7 @@ func parseHtml(t *html.Tokenizer, ret *HtmlElement, stack *parser.ParentStack[*H
 func FormatHtml(data, indent string) (string, error) {
 	t := html.NewTokenizer(strings.NewReader(data))
 	ret := NewHtmlElement(nil)
-	stack := parser.NewParentStack[*HtmlElement]()
+	stack := stack.NewNodeStack[*HtmlElement]()
 	if err := parseHtml(t, ret, stack); err != nil && err != io.EOF {
 		return "", err
 	}

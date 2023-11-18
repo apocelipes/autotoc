@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path/filepath"
 )
 
 func init() {
@@ -63,7 +64,7 @@ var usage = fmt.Sprintf(`Usage: %s [option]... <file>
 --no-encode	%s
 -h, --help	显示本帮助信息并终止程序
 `,
-	os.Args[0],
+	filepath.Base(os.Args[0]),
 	topTagUsage, topTagDefault,
 	formatterUsage, formatterDefault,
 	catalogIDUsage, catalogIDDefault,

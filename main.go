@@ -9,16 +9,24 @@ import (
 	"strings"
 
 	"github.com/apocelipes/autotoc/format"
+	"github.com/apocelipes/autotoc/internal/utils"
 	"github.com/apocelipes/autotoc/parser"
 )
 
+func checkError(err error) {
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+}
+
 func main() {
-	topTag := StringFlagWithShortName("top-tag",
+	topTag := utils.StringFlagWithShortName("top-tag",
 		"t",
 		topTagDefault,
 		topTagUsage)
 
-	formatter := StringFlagWithShortName("formatter",
+	formatter := utils.StringFlagWithShortName("formatter",
 		"f",
 		formatterDefault,
 		formatterUsage)
@@ -30,23 +38,23 @@ func main() {
 		catalogTitleDefault,
 		catalogTitleUsage)
 
-	catalogOutputType := StringFlagWithShortName("output",
+	catalogOutputType := utils.StringFlagWithShortName("output",
 		"o",
 		catalogOutputTypeDefault,
 		catalogOutputTypeUsage)
 
-	catalogScanType := StringFlagWithShortName("title-language",
+	catalogScanType := utils.StringFlagWithShortName("title-language",
 		"l",
 		catalogScanTypeDefault,
 		catalogScanTypeUsage)
 
-	catalogIndent := StringFlagWithShortName("indent",
+	catalogIndent := utils.StringFlagWithShortName("indent",
 		"i",
 		catalogIndentDefault,
 		catalogIndentUsage)
 
 	writeBack := flag.Bool("w", false, writeBackUsage)
-	tocMark := StringFlagWithShortName("toc-mark",
+	tocMark := utils.StringFlagWithShortName("toc-mark",
 		"m",
 		tocMarkDefault,
 		tocMarkUsage)
@@ -68,7 +76,7 @@ func main() {
 	var f *os.File
 	if len(flag.Args()) == 0 {
 		// 未提供文件名参数时判断是否处于pipe中，是则stdin为输入文件，不可能为terminal
-		if IsStdinTerminal() {
+		if utils.IsStdinTerminal() {
 			_, _ = fmt.Fprintln(os.Stderr, "错误：需要一个输入文件")
 			flag.Usage()
 		}
@@ -128,7 +136,7 @@ func main() {
 	}
 
 	if *writeBack || *fullOutput {
-		checkError(WriteCatalog(f, data, *tocMark, *fullOutput))
+		checkError(utils.WriteCatalog(f, data, *tocMark, *fullOutput))
 		return
 	}
 

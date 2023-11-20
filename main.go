@@ -8,9 +8,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/apocelipes/autotoc/format"
 	"github.com/apocelipes/autotoc/internal/utils"
-	"github.com/apocelipes/autotoc/parser"
+	"github.com/apocelipes/autotoc/pkg/format"
+	"github.com/apocelipes/autotoc/pkg/parser"
 )
 
 func checkError(err error) {

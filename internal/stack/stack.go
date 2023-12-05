@@ -18,12 +18,15 @@ func (s *NodeStack[T]) Push(e T) {
 	s.parents = append(s.parents, e)
 }
 
-func (s *NodeStack[T]) Pop() {
+func (s *NodeStack[T]) Pop() (T, bool) {
 	if len(s.parents) == 0 {
-		return
+		var value T
+		return value, false
 	}
 
+	ret := s.parents[len(s.parents)-1]
 	s.parents = s.parents[:len(s.parents)-1]
+	return ret, true
 }
 
 func (s *NodeStack[T]) Top() (T, bool) {

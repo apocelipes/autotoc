@@ -153,8 +153,7 @@ func (p *Parser) Parse(file io.Reader) []*TitleNode {
 
 		// 找到自己的父节点，排除所有同级或下级标题
 		for parent != nil && !parent.IsChildNode(node) {
-			parents.Pop()
-			parent, _ = parents.Top()
+			parent, _ = parents.Pop()
 		}
 
 		// 因为不知道是否存在子节点，所以都当做拥有子节点并入栈

@@ -25,6 +25,7 @@ func (s *NodeStack[T]) Pop() (T, bool) {
 	}
 
 	ret := s.parents[len(s.parents)-1]
+	clear(s.parents[len(s.parents)-1:])
 	s.parents = s.parents[:len(s.parents)-1]
 	return ret, true
 }

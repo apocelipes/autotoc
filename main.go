@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"net/url"
 	"os"
 	"strings"
@@ -119,28 +121,30 @@ func main() {
 		options = append(options, parser.WithURLEncoder(url.PathEscape))
 	}
 
+	fileContent, err := io.ReadAll(f)
+	checkError(err)
 	mdParser := parser.GetParser(options...)
-	ret := mdParser.Parse(f)
+	ret := mdParser.Parse(bytes.NewReader(fileContent))
 	if len(ret) == 0 {
 		checkError(errors.New("未找到任何标题"))
 	}
 
-	var data string
+	var catalogContent string
 	switch *catalogOutputType {
 	case "html":
-		data = renderHTMLTitles(*catalogID, *catalogTitle, *catalogIndent, *formatter, ret)
+		catalogContent = renderHTMLTitles(*catalogID, *catalogTitle, *catalogIndent, *formatter, ret)
 	case "md":
-		data = renderMarkdownTitles(*catalogTitle, *catalogIndent, ret)
+		catalogContent = renderMarkdownTitles(*catalogTitle, *catalogIndent, ret)
 	default:
 		checkError(fmt.Errorf("不支持的格式化类型: %v", *catalogOutputType))
 	}
 
 	if *writeBack || *fullOutput {
-		checkError(utils.WriteCatalog(f, data, *tocMark, *fullOutput))
+		checkError(utils.WriteCatalog(fileContent, catalogContent, *tocMark, *fullOutput, f.Name()))
 		return
 	}
 
-	fmt.Println(data)
+	fmt.Println(catalogContent)
 }
 
 func renderHTMLTitles(catalogID, catalogTitle, catalogIndent, formatter string, titles []*parser.TitleNode) string {

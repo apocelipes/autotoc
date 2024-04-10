@@ -2,27 +2,18 @@ package utils
 
 import (
 	"bytes"
-	"io"
 	"os"
 	"path/filepath"
 	"slices"
 )
 
 // WriteCatalog 控制目录和文件信息的写入方向
-func WriteCatalog(source *os.File, catalog, tocMark string, outputStdout bool) error {
-	if _, err := source.Seek(0, io.SeekStart); err != nil {
-		return err
-	}
-
-	data, err := io.ReadAll(source)
-	if err != nil {
-		return err
-	}
+func WriteCatalog(data []byte, catalog, tocMark string, outputStdout bool, fileName string) error {
 	if outputStdout {
 		return WriteStdout([]byte(catalog), []byte(tocMark), data)
 	}
 
-	return WriteBackFile([]byte(catalog), []byte(tocMark), data, source.Name())
+	return WriteBackFile([]byte(catalog), []byte(tocMark), data, fileName)
 }
 
 func insertCatalogToFile(fileData, catalog, tocMark []byte) []byte {

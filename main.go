@@ -75,6 +75,10 @@ func main() {
 
 	flag.Parse()
 
+	if *writeBack && *fullOutput {
+		checkError(errors.New("--full 不能和选项 -w 一起使用"))
+	}
+
 	var f *os.File
 	if len(flag.Args()) == 0 {
 		// 未提供文件名参数时判断是否处于pipe中，是则stdin为输入文件，不可能为terminal
@@ -84,7 +88,7 @@ func main() {
 		}
 
 		if *writeBack {
-			checkError(errors.New("-w不能在输入为stdin时使用"))
+			checkError(errors.New("-w 不能在输入为 stdin 时使用"))
 		}
 
 		f = os.Stdin
@@ -139,8 +143,11 @@ func main() {
 		checkError(fmt.Errorf("不支持的格式化类型: %v", *catalogOutputType))
 	}
 
-	if *writeBack || *fullOutput {
-		checkError(utils.WriteCatalog(fileContent, catalogContent, *tocMark, *fullOutput, f.Name()))
+	if *writeBack {
+		checkError(utils.WriteCatalog(fileContent, catalogContent, *tocMark, false, f.Name()))
+		return
+	} else if *fullOutput {
+		checkError(utils.WriteCatalog(fileContent, catalogContent, *tocMark, true, f.Name()))
 		return
 	}
 

@@ -1,111 +1,62 @@
 package utils
 
 import (
-	"bufio"
+	"bytes"
 	"io"
 	"os"
 	"path/filepath"
-	"strings"
+	"slices"
 )
 
 // WriteCatalog 控制目录和文件信息的写入方向
 func WriteCatalog(source *os.File, catalog, tocMark string, outputStdout bool) error {
-	if outputStdout {
-		return WriteStdout(catalog, tocMark, source)
-	}
-
-	return WriteBackFile(catalog, tocMark, source)
-}
-
-func hasTocMark(file io.Reader, tocMark string) bool {
-	// can change file's read/write offset
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		if line := scanner.Text(); line == tocMark {
-			return true
-		}
-	}
-
-	return false
-}
-
-// 将catalog拼接到文件内容的tocMark处，
-// 如果文件内容中不存在tocMark，就拼接在内容的开头
-func concatCatalog(hasToc bool, catalog, tocMark, fileData string) string {
-	if hasToc {
-		// 先删除catalog多余的换行符，因为tocMark所在位置已经存在一个换行符
-		catalog = strings.TrimRight(catalog, "\n")
-		return strings.Replace(fileData, tocMark, catalog, 1)
-	}
-
-	return catalog + fileData
-}
-
-func insertCatalogToFile(file io.ReadSeeker, catalog, tocMark string) (string, error) {
-	if _, err := file.Seek(0, 0); err != nil {
-		return "", err
-	}
-	hasToc := hasTocMark(file, tocMark)
-	if _, err := file.Seek(0, io.SeekStart); err != nil {
-		return "", err
-	}
-	data, err := io.ReadAll(file)
-	if err != nil {
-		return "", err
-	}
-	return concatCatalog(hasToc, catalog, tocMark, string(data)), nil
-}
-
-// WriteStdout 将目录和文件内容写入标准输出
-func WriteStdout(catalog, tocMark string, source *os.File) error {
-	data, err := insertCatalogToFile(source, catalog, tocMark)
-	if err != nil {
+	if _, err := source.Seek(0, io.SeekStart); err != nil {
 		return err
 	}
 
-	_, err = os.Stdout.WriteString(data)
+	data, err := io.ReadAll(source)
+	if err != nil {
+		return err
+	}
+	if outputStdout {
+		return WriteStdout([]byte(catalog), []byte(tocMark), data)
+	}
+
+	return WriteBackFile([]byte(catalog), []byte(tocMark), data, source.Name())
+}
+
+func insertCatalogToFile(fileData, catalog, tocMark []byte) []byte {
+	hasToc := len(tocMark) != 0 && bytes.Contains(fileData, tocMark)
+	if hasToc {
+		// 先删除catalog多余的换行符，因为tocMark所在位置已经存在一个换行符
+		catalog = bytes.TrimRight(catalog, "\n")
+		return bytes.Replace(fileData, tocMark, catalog, 1)
+	}
+
+	return slices.Concat(catalog, fileData)
+}
+
+// WriteStdout 将目录和文件内容写入标准输出
+func WriteStdout(catalog, tocMark, source []byte) error {
+	data := insertCatalogToFile(source, catalog, tocMark)
+
+	_, err := os.Stdout.Write([]byte(data))
 	return err
 }
 
 // WriteBackFile 将目录写回文件指定位置
-func WriteBackFile(catalog, tocMark string, file *os.File) error {
-	filePath, err := filepath.Abs(file.Name())
+func WriteBackFile(catalog, tocMark, fileData []byte, fileName string) error {
+	filePath, err := filepath.Abs(fileName)
 	if err != nil {
 		return err
 	}
-	backupName := filepath.Join(filepath.Dir(filePath),
-		".backup_"+filepath.Base(filePath))
-	backup, err := os.OpenFile(backupName, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
-	if err != nil {
+	backupName := filepath.Join(filepath.Dir(filePath), ".backup_"+filepath.Base(filePath))
+	if err := os.WriteFile(backupName, fileData, 0644); err != nil {
 		return err
 	}
 
-	if _, err := file.Seek(0, 0); err != nil {
-		return err
-	}
-
-	if _, err := io.Copy(backup, file); err != nil {
-		return err
-	}
-
-	if err := backup.Close(); err != nil {
-		return err
-	}
-
-	fullData, err := insertCatalogToFile(file, catalog, tocMark)
-	if err != nil {
-		return err
-	}
-
-	if err := file.Truncate(0); err != nil {
-		return err
-	}
-
-	if _, err := file.Seek(0, 0); err != nil {
-		return err
-	}
-
-	if _, err := file.WriteString(fullData); err != nil {
+	fullData := insertCatalogToFile(fileData, catalog, tocMark)
+	if err := os.WriteFile(fileName, fullData, 0644); err != nil {
 		return err
 	}
 

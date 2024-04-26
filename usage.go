@@ -17,7 +17,7 @@ func init() {
 // 参数选项说明
 const (
 	topTagUsage            = "设置作为目录顶层项的tag，将从指定tag开始解析标题"
-	formatterUsage         = "选择格式化html代码的方式，目前只支持default和prettyprint(output为markdown时不支持)"
+	formatterUsage         = "选择格式化html代码的方式，目前只支持default(output为markdown时不支持)"
 	catalogIDUsage         = "目录的html id(output为markdown时不支持)"
 	catalogTitleUsage      = "目录的标题"
 	catalogOutputTypeUsage = "输出的目录格式，可以为html或md(markdown)"

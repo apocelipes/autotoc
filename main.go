@@ -17,7 +17,7 @@ import (
 
 func checkError(err error) {
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		_, _ = fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }
@@ -162,6 +162,9 @@ func renderHTMLTitles(catalogID, catalogTitle, catalogIndent, formatter string, 
 	data := format.RenderCatalog(catalogID, catalogTitle, html.String())
 
 	formatHTMLFunc := format.NewFormatter(formatter)
+	if formatHTMLFunc == nil {
+		checkError(fmt.Errorf("unsupported HTML formatter: %v", formatter))
+	}
 	return formatHTMLFunc(data, catalogIndent)
 }
 

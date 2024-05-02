@@ -3,7 +3,7 @@ module github.com/apocelipes/autotoc
 go 1.22
 
 require (
-	github.com/PuerkitoBio/goquery v1.9.1
+	github.com/PuerkitoBio/goquery v1.9.2
 	github.com/mattn/go-isatty v0.0.20
 	golang.org/x/net v0.24.0
 )

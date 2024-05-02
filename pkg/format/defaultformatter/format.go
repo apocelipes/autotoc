@@ -1,6 +1,7 @@
 package defaultformatter
 
 import (
+	"fmt"
 	"io"
 	"strings"
 
@@ -15,18 +16,8 @@ import (
 // 正常解析完成返回io.EOF
 func parseHtml(t *html.Tokenizer, ret *HtmlElement, stack *stack.NodeStack[*HtmlElement]) error {
 	for {
-		tt := t.Next()
-		if tt == html.ErrorToken {
-			return t.Err()
-		}
-
+		t.Next()
 		tk := t.Token()
-		if tk.Type == html.TextToken {
-			stripped := strings.Trim(tk.Data, "\n")
-			if len(stripped) == 0 {
-				continue
-			}
-		}
 
 		parent, _ := stack.Top()
 		switch tk.Type {
@@ -49,8 +40,14 @@ func parseHtml(t *html.Tokenizer, ret *HtmlElement, stack *stack.NodeStack[*Html
 				stack.Pop()
 				return nil
 			}
-			//TODO 处理父节点endTag丢失的情况
-		case html.TextToken, html.CommentToken, html.DoctypeToken, html.SelfClosingTagToken:
+			return fmt.Errorf("mismatched end tag: %v ends with %v", parent.StartToken.String(), tk.String())
+		case html.TextToken:
+			stripped := strings.Trim(tk.Data, "\n")
+			if len(stripped) == 0 {
+				continue
+			}
+			fallthrough
+		case html.CommentToken, html.DoctypeToken, html.SelfClosingTagToken:
 			el := NewHtmlElement(&tk)
 			el.SelfClosed = tk.Type == html.SelfClosingTagToken
 			if parent != nil {
@@ -58,6 +55,8 @@ func parseHtml(t *html.Tokenizer, ret *HtmlElement, stack *stack.NodeStack[*Html
 			} else {
 				ret.AddChild(el)
 			}
+		case html.ErrorToken:
+			return t.Err()
 		}
 	}
 }
@@ -66,8 +65,8 @@ func parseHtml(t *html.Tokenizer, ret *HtmlElement, stack *stack.NodeStack[*Html
 func FormatHtml(data, indent string) (string, error) {
 	t := html.NewTokenizer(strings.NewReader(data))
 	ret := NewHtmlElement(nil)
-	stack := stack.NewNodeStack[*HtmlElement]()
-	if err := parseHtml(t, ret, stack); err != nil && err != io.EOF {
+	nodeStack := stack.NewNodeStack[*HtmlElement]()
+	if err := parseHtml(t, ret, nodeStack); err != nil && err != io.EOF {
 		return "", err
 	}
 

@@ -11,5 +11,4 @@ const (
 	catalogIndentDefault     = "  " // 2 space
 	tocMarkDefault           = "[TOC]"
 	excludeTitleDefault      = "参考,参考资料"
-	excludeFilterDefault     = ""
 )

@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"path/filepath"
 )
 
 func init() {
@@ -32,7 +31,7 @@ const (
 	noEncodeUsage          = "禁止将标题按URL格式进行编码"
 )
 
-var usage = fmt.Sprintf(`Usage: %s [option]... <file>
+var usage = fmt.Sprintf(`Usage: autotoc [option]... <file>
 
 读入file，根据其内容生成目录结构。
 未提供file参数时默认读取stdin。
@@ -55,7 +54,7 @@ var usage = fmt.Sprintf(`Usage: %s [option]... <file>
 -m string, --toc-mark string
 	%s (default: "%s")
 --exclude-title=[title1,title2]
-	%s (default: "%s")
+	%s (default: "")
 --exclude-filter=[pattern]
 	%s (default: "%s")
 -w	%s
@@ -64,7 +63,6 @@ var usage = fmt.Sprintf(`Usage: %s [option]... <file>
 --no-encode	%s
 -h, --help	显示本帮助信息并终止程序
 `,
-	filepath.Base(os.Args[0]),
 	topTagUsage, topTagDefault,
 	formatterUsage, formatterDefault,
 	catalogIDUsage, catalogIDDefault,
@@ -74,7 +72,7 @@ var usage = fmt.Sprintf(`Usage: %s [option]... <file>
 	catalogIndentUsage,
 	tocMarkUsage, tocMarkDefault,
 	excludeTitleUsage, excludeTitleDefault,
-	excludeFilterUsage, excludeFilterDefault,
+	excludeFilterUsage,
 	writeBackUsage,
 	fullOutputUsage,
 	noExcludeUsage,

@@ -65,7 +65,7 @@ func main() {
 		excludeTitleDefault,
 		excludeTitleUsage)
 	excludeFilter := flag.String("exclude-filter",
-		excludeFilterDefault,
+		"",
 		excludeFilterUsage)
 	noExclude := flag.Bool("no-exclude", false, noExcludeUsage)
 
@@ -83,7 +83,7 @@ func main() {
 	if len(flag.Args()) == 0 {
 		// 未提供文件名参数时判断是否处于pipe中，是则stdin为输入文件，不可能为terminal
 		if utils.IsStdinTerminal() {
-			_, _ = fmt.Fprintln(os.Stderr, "错误：需要一个输入文件")
+			_, _ = os.Stderr.WriteString("错误：需要一个输入文件")
 			flag.Usage()
 		}
 
@@ -130,7 +130,9 @@ func main() {
 	mdParser := parser.GetParser(options...)
 	ret := mdParser.Parse(bytes.NewReader(fileContent))
 	if len(ret) == 0 {
-		checkError(errors.New("未找到任何标题"))
+		// not an error
+		_, _ = os.Stdout.WriteString("未找到任何标题")
+		return
 	}
 
 	var catalogContent string

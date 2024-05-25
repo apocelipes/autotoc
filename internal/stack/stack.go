@@ -1,5 +1,7 @@
 package stack
 
+import "slices"
+
 // NodeStack 用于解析html时缓存
 type NodeStack[T any] struct {
 	parents []T
@@ -19,24 +21,25 @@ func (s *NodeStack[T]) Push(e T) {
 }
 
 func (s *NodeStack[T]) Pop() (T, bool) {
-	if len(s.parents) == 0 {
+	n := len(s.parents)
+	if n == 0 {
 		var value T
 		return value, false
 	}
 
-	ret := s.parents[len(s.parents)-1]
-	clear(s.parents[len(s.parents)-1:])
-	s.parents = s.parents[:len(s.parents)-1]
+	ret := s.parents[n-1]
+	s.parents = slices.Delete(s.parents, n-1, n)
 	return ret, true
 }
 
 func (s *NodeStack[T]) Top() (T, bool) {
-	if len(s.parents) == 0 {
+	n := len(s.parents)
+	if n == 0 {
 		var t T
 		return t, false
 	}
 
-	return s.parents[len(s.parents)-1], true
+	return s.parents[n-1], true
 }
 
 func (s *NodeStack[T]) Clear() {

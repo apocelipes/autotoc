@@ -4,18 +4,17 @@ import (
 	"bytes"
 	"os"
 	"path/filepath"
-	"slices"
 )
 
 func insertCatalogToFile(fileData, catalog, tocMark []byte) []byte {
 	hasToc := len(tocMark) != 0 && bytes.Contains(fileData, tocMark)
 	if hasToc {
-		// 先删除catalog多余的换行符，因为tocMark所在位置已经存在一个换行符
+		// 先删除catalog多余的换行符，因为tocMark所在位置已经用额外的空行和正文分隔
 		catalog = bytes.TrimRight(catalog, "\n")
 		return bytes.Replace(fileData, tocMark, catalog, 1)
 	}
 
-	return slices.Concat(catalog, fileData)
+	return bytes.Join([][]byte{catalog, fileData}, []byte("\n"))
 }
 
 // WriteStdout 将目录和文件内容写入标准输出

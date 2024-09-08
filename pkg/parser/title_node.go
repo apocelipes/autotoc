@@ -79,20 +79,19 @@ func (t *TitleNode) HTML() string {
 // Markdown 生成当前节点及其子节点的markdown
 // depth为0表示当前节点没有父节点，因此不设置缩进，只设置其子节点的缩进
 func (t *TitleNode) Markdown(indent string, depth int) string {
-	if !t.hasChild() {
-		if depth == 0 {
-			return fmt.Sprintf(catalogMarkdownTemplate, t.content, t.id)
-		}
+	var content string
+	if depth == 0 {
+		content = fmt.Sprintf(catalogMarkdownTemplate, t.content, t.id)
+	} else {
+		content = fmt.Sprintf(indent+catalogMarkdownTemplate, t.content, t.id)
+	}
 
-		return fmt.Sprintf(indent+catalogMarkdownTemplate, t.content, t.id)
+	if !t.hasChild() {
+		return content
 	}
 
 	md := strings.Builder{}
-	if depth == 0 {
-		md.WriteString(fmt.Sprintf(catalogMarkdownTemplate, t.content, t.id))
-	} else {
-		md.WriteString(fmt.Sprintf(indent+catalogMarkdownTemplate, t.content, t.id))
-	}
+	md.WriteString(content)
 
 	for _, child := range t.children {
 		md.WriteString(child.Markdown(strings.Repeat(indent, depth+1), depth+1))

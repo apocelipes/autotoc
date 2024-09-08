@@ -7,15 +7,6 @@ import (
 	"slices"
 )
 
-// WriteCatalog 控制目录和文件信息的写入方向
-func WriteCatalog(data []byte, catalog, tocMark string, outputStdout bool, fileName string) error {
-	if outputStdout {
-		return WriteStdout([]byte(catalog), []byte(tocMark), data)
-	}
-
-	return WriteBackFile([]byte(catalog), []byte(tocMark), data, fileName)
-}
-
 func insertCatalogToFile(fileData, catalog, tocMark []byte) []byte {
 	hasToc := len(tocMark) != 0 && bytes.Contains(fileData, tocMark)
 	if hasToc {

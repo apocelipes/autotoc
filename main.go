@@ -128,8 +128,8 @@ func main() {
 	fileContent, err := io.ReadAll(f)
 	checkError(err)
 	mdParser := parser.GetParser(options...)
-	ret := mdParser.Parse(bytes.NewReader(fileContent))
-	if len(ret) == 0 {
+	titleNodes := mdParser.Parse(bytes.NewReader(fileContent))
+	if len(titleNodes) == 0 {
 		// not an error
 		_, _ = os.Stdout.WriteString("未找到任何标题")
 		return
@@ -138,18 +138,18 @@ func main() {
 	var catalogContent string
 	switch *catalogOutputType {
 	case "html":
-		catalogContent = renderHTMLTitles(*catalogID, *catalogTitle, *catalogIndent, *formatter, ret)
+		catalogContent = renderHTMLTitles(*catalogID, *catalogTitle, *catalogIndent, *formatter, titleNodes)
 	case "md":
-		catalogContent = renderMarkdownTitles(*catalogTitle, *catalogIndent, ret)
+		catalogContent = renderMarkdownTitles(*catalogTitle, *catalogIndent, titleNodes)
 	default:
 		checkError(fmt.Errorf("不支持的格式化类型: %v", *catalogOutputType))
 	}
 
 	if *writeBack {
-		checkError(utils.WriteCatalog(fileContent, catalogContent, *tocMark, false, f.Name()))
+		checkError(utils.WriteBackFile([]byte(catalogContent), []byte(*tocMark), fileContent, f.Name()))
 		return
 	} else if *fullOutput {
-		checkError(utils.WriteCatalog(fileContent, catalogContent, *tocMark, true, f.Name()))
+		checkError(utils.WriteStdout([]byte(catalogContent), []byte(*tocMark), fileContent))
 		return
 	}
 

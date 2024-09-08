@@ -158,16 +158,17 @@ func main() {
 
 func renderHTMLTitles(catalogID, catalogTitle, catalogIndent, formatter string, titles []*parser.TitleNode) string {
 	html := strings.Builder{}
+	fmt.Fprintf(&html, `<blockquote id="%s"><h4>%s</h4><ul>`, catalogID, catalogTitle)
 	for _, v := range titles {
-		html.WriteString(v.HTML())
+		v.WriteHTML(&html)
 	}
-	data := format.RenderCatalog(catalogID, catalogTitle, html.String())
+	fmt.Fprint(&html, "</ul></blockquote>")
 
 	formatHTMLFunc := format.NewFormatter(formatter)
 	if formatHTMLFunc == nil {
-		checkError(fmt.Errorf("unsupported HTML formatter: %v", formatter))
+		panic(fmt.Errorf("unsupported HTML formatter: %v", formatter))
 	}
-	return formatHTMLFunc(data, catalogIndent)
+	return formatHTMLFunc(html.String(), catalogIndent)
 }
 
 func renderMarkdownTitles(catalogTitle, catalogIndent string, titles []*parser.TitleNode) string {
@@ -175,7 +176,7 @@ func renderMarkdownTitles(catalogTitle, catalogIndent string, titles []*parser.T
 	md.WriteString("#### " + catalogTitle + "\n\n")
 	for _, v := range titles {
 		// each parent has no indent
-		md.WriteString(v.Markdown(catalogIndent, 0))
+		v.WriteMarkdown(&md, catalogIndent, 0)
 	}
 
 	return md.String()

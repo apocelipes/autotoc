@@ -22,7 +22,7 @@ func parseHtml(t *html.Tokenizer, ret *HtmlElement, stack *stack.NodeStack[*Html
 		parent, _ := stack.Top()
 		switch tk.Type {
 		case html.StartTagToken:
-			el := NewHtmlElement(&tk)
+			el := NewHtmlElement(tk)
 			if parent != nil {
 				parent.AddChild(el)
 			} else {
@@ -36,7 +36,7 @@ func parseHtml(t *html.Tokenizer, ret *HtmlElement, stack *stack.NodeStack[*Html
 		case html.EndTagToken:
 			if tk.Data == parent.StartToken.Data {
 				// 找到父节点的endTag后返回
-				parent.EndToken = &tk
+				parent.EndToken = tk
 				stack.Pop()
 				return nil
 			}
@@ -48,7 +48,7 @@ func parseHtml(t *html.Tokenizer, ret *HtmlElement, stack *stack.NodeStack[*Html
 			}
 			fallthrough
 		case html.CommentToken, html.DoctypeToken, html.SelfClosingTagToken:
-			el := NewHtmlElement(&tk)
+			el := NewHtmlElement(tk)
 			el.SelfClosed = tk.Type == html.SelfClosingTagToken
 			if parent != nil {
 				parent.AddChild(el)
@@ -64,11 +64,13 @@ func parseHtml(t *html.Tokenizer, ret *HtmlElement, stack *stack.NodeStack[*Html
 // FormatHtml 格式化html
 func FormatHtml(data, indent string) (string, error) {
 	t := html.NewTokenizer(strings.NewReader(data))
-	ret := NewHtmlElement(nil)
+	ret := NewHtmlElement(html.Token{})
 	nodeStack := stack.NewNodeStack[*HtmlElement]()
 	if err := parseHtml(t, ret, nodeStack); err != nil && err != io.EOF {
 		return "", err
 	}
 
-	return ret.ToString(indent, 0, 1), nil
+	buf := strings.Builder{}
+	ret.WriteTo(&buf, indent, 0, 1)
+	return buf.String(), nil
 }

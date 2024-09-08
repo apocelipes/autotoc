@@ -1,6 +1,8 @@
 package format
 
-import "github.com/apocelipes/autotoc/pkg/format/defaultformatter"
+import (
+	"github.com/apocelipes/autotoc/pkg/format/defaultformatter"
+)
 
 func init() {
 	SetFormatter("default", defaultHtmlFormatter)

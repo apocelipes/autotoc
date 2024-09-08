@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func insertCatalogToFile(fileData, catalog, tocMark []byte) []byte {
@@ -47,4 +48,11 @@ func WriteBackFile(catalog, tocMark, fileData []byte, fileName string) error {
 	}
 
 	return nil
+}
+
+func RepeatToBuilder(builder *strings.Builder, content string, count int) {
+	builder.Grow(len(content) * count)
+	for range count {
+		_, _ = builder.WriteString(content)
+	}
 }

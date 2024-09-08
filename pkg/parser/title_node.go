@@ -3,6 +3,8 @@ package parser
 import (
 	"fmt"
 	"strings"
+
+	"github.com/apocelipes/autotoc/internal/utils"
 )
 
 // TitleNode 标题节点，按顶层标签构建的节点树
@@ -58,44 +60,37 @@ func (t *TitleNode) hasChild() bool {
 	return len(t.children) != 0
 }
 
-// HTML 生成当前节点及其子节点的html
-func (t *TitleNode) HTML() string {
+// WriteHTML 生成当前节点及其子节点的html
+func (t *TitleNode) WriteHTML(builder *strings.Builder) {
 	if !t.hasChild() {
-		return fmt.Sprintf(catalogItemTemplate, t.id, t.content)
+		fmt.Fprintf(builder, catalogItemTemplate, t.id, t.content)
+		return
 	}
 
-	html := strings.Builder{}
-	html.WriteString(fmt.Sprintf(catalogItemWithChildren, t.id, t.content))
-	html.WriteString("<ul>\n")
+	fmt.Fprintf(builder, catalogItemWithChildren, t.id, t.content)
+	builder.WriteString("<ul>\n")
 	for _, child := range t.children {
-		html.WriteString(child.HTML())
+		child.WriteHTML(builder)
 	}
-	html.WriteString("</ul>\n")
-	html.WriteString("</li>\n")
-
-	return html.String()
+	builder.WriteString("</ul>\n")
+	builder.WriteString("</li>\n")
 }
 
-// Markdown 生成当前节点及其子节点的markdown
+// WriteMarkdown 生成当前节点及其子节点的markdown
 // depth为0表示当前节点没有父节点，因此不设置缩进，只设置其子节点的缩进
-func (t *TitleNode) Markdown(indent string, depth int) string {
-	var content string
+func (t *TitleNode) WriteMarkdown(builder *strings.Builder, indent string, depth int) {
 	if depth == 0 {
-		content = fmt.Sprintf(catalogMarkdownTemplate, t.content, t.id)
+		fmt.Fprintf(builder, catalogMarkdownTemplate, t.content, t.id)
 	} else {
-		content = fmt.Sprintf(indent+catalogMarkdownTemplate, t.content, t.id)
+		utils.RepeatToBuilder(builder, indent, depth)
+		fmt.Fprintf(builder, catalogMarkdownTemplate, t.content, t.id)
 	}
 
 	if !t.hasChild() {
-		return content
+		return
 	}
-
-	md := strings.Builder{}
-	md.WriteString(content)
 
 	for _, child := range t.children {
-		md.WriteString(child.Markdown(strings.Repeat(indent, depth+1), depth+1))
+		child.WriteMarkdown(builder, indent, depth+1)
 	}
-
-	return md.String()
 }

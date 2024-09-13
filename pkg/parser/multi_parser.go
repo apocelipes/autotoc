@@ -13,7 +13,7 @@ func init() {
 
 func newMultiParser(topTag string) TitleParser {
 	p := &multiParser{
-		parsers: make([]TitleParser, 0),
+		parsers: make([]TitleParser, 0, len(parserCreators)-1),
 	}
 
 	// 创建所有注册过的解析器

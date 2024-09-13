@@ -79,12 +79,10 @@ func (t *TitleNode) WriteHTML(builder *strings.Builder) {
 // WriteMarkdown 生成当前节点及其子节点的markdown
 // depth为0表示当前节点没有父节点，因此不设置缩进，只设置其子节点的缩进
 func (t *TitleNode) WriteMarkdown(builder *strings.Builder, indent string, depth int) {
-	if depth == 0 {
-		fmt.Fprintf(builder, catalogMarkdownTemplate, t.content, t.id)
-	} else {
+	if depth > 0 {
 		utils.RepeatToBuilder(builder, indent, depth)
-		fmt.Fprintf(builder, catalogMarkdownTemplate, t.content, t.id)
 	}
+	fmt.Fprintf(builder, catalogMarkdownTemplate, t.content, t.id)
 
 	if !t.hasChild() {
 		return

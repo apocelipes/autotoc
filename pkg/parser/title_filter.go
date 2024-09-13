@@ -3,6 +3,7 @@ package parser
 import (
 	"fmt"
 	"regexp"
+	"slices"
 	"strings"
 )
 
@@ -39,15 +40,9 @@ func (filter *DefaultFilter) SetExcludeRegExp(reg string) (err error) {
 // FilterTitleContent 根据title的内容过滤标题
 // 返回true表示title需要被过滤
 func (filter *DefaultFilter) FilterTitleContent(content string) bool {
-	for i := range filter.ExcludeTitles {
-		if content == filter.ExcludeTitles[i] {
-			return true
-		}
-	}
-
 	if filter.ExcludeRegExp == nil {
 		return false
 	}
 
-	return filter.ExcludeRegExp.MatchString(content)
+	return slices.Index(filter.ExcludeTitles, content) != -1 || filter.ExcludeRegExp.MatchString(content)
 }

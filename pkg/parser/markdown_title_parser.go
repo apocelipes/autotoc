@@ -3,6 +3,7 @@ package parser
 import (
 	"fmt"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 	"unicode"
@@ -127,25 +128,15 @@ func removeNonLetter(s string) string {
 
 // 找到从左起第一个非空字符串
 func findLeftNonEmptyStr(words []string) int {
-	length := len(words)
-	for i := 0; i < length; i++ {
-		if words[i] != "" {
-			return i
-		}
-	}
-
-	return -1
+	return slices.IndexFunc(words, func(s string) bool {
+		return s != ""
+	})
 }
 
 // 找到从右起第一个非空字符串
 func findRightNonEmptyStr(words []string) int {
-	length := len(words)
-	if length == 0 {
-		return -1
-	}
-
-	for i := length - 1; i >= 0; i-- {
-		if words[i] != "" {
+	for i, v := range slices.Backward(words) {
+		if v != "" {
 			return i
 		}
 	}

@@ -100,7 +100,9 @@ func main() {
 		var err error
 		f, err = os.OpenFile(flag.Arg(0), openFlag, 0)
 		checkError(err)
-		defer f.Close()
+		defer func(file *os.File) {
+			checkError(file.Close())
+		}(f)
 	}
 
 	// 终端可能无法直接输入tab，所以用\t代替

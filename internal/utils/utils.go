@@ -33,12 +33,12 @@ func WriteBackFile(catalog, tocMark, fileData []byte, fileName string) error {
 		return err
 	}
 	backupName := filepath.Join(filepath.Dir(filePath), ".backup_"+filepath.Base(filePath))
-	if err := os.WriteFile(backupName, fileData, 0644); err != nil {
+	if err := os.WriteFile(backupName, fileData, 0o644); err != nil {
 		return err
 	}
 
 	fullData := insertCatalogToFile(fileData, catalog, tocMark)
-	if err := os.WriteFile(fileName, fullData, 0644); err != nil {
+	if err := os.WriteFile(fileName, fullData, 0o644); err != nil {
 		return err
 	}
 

@@ -3,9 +3,7 @@ package format
 // 返回格式化后的html
 type FormatterFunc func(data, indent string) string
 
-var (
-	formatters = make(map[string]FormatterFunc)
-)
+var formatters = make(map[string]FormatterFunc)
 
 func SetFormatter(name string, formatter FormatterFunc) {
 	if name == "" || formatter == nil {

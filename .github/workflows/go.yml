@@ -1,0 +1,42 @@
+name: Go-Test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: Set up Go
+      uses: actions/setup-go@v6
+      with:
+        go-version-file: './go.mod'
+    
+    - name: Format Check
+      run: |
+        go fmt ./...
+        if ! git diff --color=always --exit-code -- . ':!vendor'; then
+          echo "::error::Found changed files after 'go fmt ./...'."
+          echo "Please run 'go fmt ./...' and check in all changes."
+          exit 1
+        fi
+    
+    - name: Golangci-lint
+      uses: golangci/golangci-lint-action@v9
+      with:
+        version: v2.12
+
+    - name: Build
+      run: go build -v ./...
+
+    - name: Test
+      run: go test -v ./...
+
+    - name: Test Race
+      run: go test -race -v ./...

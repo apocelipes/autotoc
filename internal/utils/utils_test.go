@@ -16,7 +16,7 @@ func TestInsertCatalogToFile(t *testing.T) {
 			data:    []byte("test\n"),
 			toc:     nil,
 			catalog: []byte("catalog\n"),
-			expect:  []byte("catalog\ntest\n"),
+			expect:  []byte("catalog\n\ntest\n"),
 		},
 		{
 			data:    []byte("test\n[TOC]\nend"),

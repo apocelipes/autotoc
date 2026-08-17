@@ -89,7 +89,7 @@ func TestStackClear(t *testing.T) {
 		t.Errorf("wrong length: want 0, got %v", len(stack.parents))
 	}
 
-	for i := 0; i < defaultCacheSize+1; i++ {
+	for i := range defaultCacheSize + 1 {
 		stack.Push(i)
 	}
 	if cap(stack.parents) == defaultCacheSize {
